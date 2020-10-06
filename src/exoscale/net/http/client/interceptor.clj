@@ -8,7 +8,8 @@
             [exoscale.net.http.client.response :as response]
             [exoscale.net.http.client.utils :as u]
             [qbits.auspex :as ax]
-            [qbits.auspex.executor :as exe])
+            [qbits.auspex.executor :as exe]
+            [clojure.core.async :as async])
   (:import (java.net URI)
            (java.net.http HttpClient
                           HttpRequest
@@ -76,13 +77,14 @@
 (def send-interceptor
   {:name ::send
    :enter (fn [{:as ctx
-                :keys [async?]
-                :exoscale.net.http/keys [request ^HttpClient client response-handler-executor]
+                :exoscale.net.http/keys [request ^HttpClient
+                                         client
+                                         response-handler-executor]
                 :or {response-handler-executor (exe/fork-join-executor)}}]
             (let [{:exoscale.net.http.response/keys [handler handler-opts]
                    :or {handler :input-stream}} ctx
                   body-handler (response/body-handler handler handler-opts)]
-              (if async?
+              (if (-> ctx :request :async?)
                 (-> (.sendAsync client request body-handler)
                     (ax/then (fn [response]
                                (assoc ctx

@@ -1,5 +1,6 @@
 (ns exoscale.net.http.client.request
   (:import (java.io InputStream)
+           (java.util.function Supplier)
            (java.net.http
             HttpRequest$BodyPublishers
             HttpRequest$BodyPublisher
@@ -19,7 +20,9 @@
 
   InputStream
   (-body-publisher [is]
-    (HttpRequest$BodyPublishers/ofInputStream is))
+    (HttpRequest$BodyPublishers/ofInputStream
+     (reify Supplier
+       (get [_] is))))
 
   HttpRequest$BodyPublisher
   (-body-publisher [p]
