@@ -2,8 +2,7 @@
   (:refer-clojure :exclude [get])
   (:require [exoscale.interceptor :as ix]
             [exoscale.net.http.client.interceptor :as interceptor]
-            [exoscale.net.http.client.option :as option]
-            [clojure.core.async :as async])
+            [exoscale.net.http.client.option :as option])
   (:import
    (java.net.http HttpClient)))
 
@@ -15,7 +14,7 @@
 (def default-opts
   {:exoscale.net.http.client.option/follow-redirects :normal
    :exoscale.net.http.client.option/version :http-2
-   :exoscale.net.http.response/body-handler :input-stream})
+   :exoscale.net.http.client.response/body-handler :input-stream})
 
 (defn client
   [opts]
@@ -30,6 +29,12 @@
                       :exoscale.net.http/client client
                       :request request)
                (:interceptor-chain ctx interceptor/default-interceptor-chain))))
+
+(defn ring2-request
+  [client ctx]
+  (ix/execute (assoc ctx
+                     :exoscale.net.http/client client)
+              (:interceptor-chain ctx interceptor/ring2-interceptor-chain)))
 
 (def request ring1-request)
 
@@ -53,18 +58,10 @@
   (ring1-request client
                  (assoc request :method :delete)))
 
-;; (def c (client {}))
+(def c (client {}))
 
-;; (use 'exoscale.net.http.client.core-async)
-;; (def ch (clojure.core.async/chan 1))
-;; (dotimes [i 10]
-;;   (async/put! ch (java.nio.ByteBuffer/wrap (.getBytes (str i))))
-;;   (async/close! ch))
-
-;; (prn (request c
-;;               {:method :post :url "http://0.0.0.0:8000"
-;;                :query-params {:foo :bar}
-;;                :body ch
-;;                ;; :exoscale.net.http.response/body-handler :discarding
-;;                ;; :body/handler-opts {}
-;;                }))
+(prn @(request c
+               {:method :get :url "http://google.com/"
+                :query-params {:foo :bar}}
+               {:exoscale.net.http.client.request/async? true
+                :exoscale.net.http.client.response/body-handler :discarding}))
