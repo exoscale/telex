@@ -2,6 +2,8 @@
   (:refer-clojure :exclude [get])
   (:require [exoscale.interceptor :as ix]
             [exoscale.net.http.client.interceptor :as interceptor]
+            [exoscale.net.http.client.interceptor.ring1 :as ring1]
+            [exoscale.net.http.client.interceptor.ring2 :as ring2]
             [exoscale.net.http.client.option :as option])
   (:import
    (java.net.http HttpClient)))
@@ -28,13 +30,13 @@
    (ix/execute (assoc ctx
                       :exoscale.net.http/client client
                       :request request)
-               (:interceptor-chain ctx interceptor/default-interceptor-chain))))
+               (:interceptor-chain ctx ring1/interceptor-chain))))
 
 (defn ring2-request
   [client ctx]
   (ix/execute (assoc ctx
                      :exoscale.net.http/client client)
-              (:interceptor-chain ctx interceptor/ring2-interceptor-chain)))
+              (:interceptor-chain ctx ring2/interceptor-chain)))
 
 (def request ring1-request)
 
@@ -58,10 +60,9 @@
   (ring1-request client
                  (assoc request :method :delete)))
 
-(def c (client {}))
-
-(prn @(request c
-               {:method :get :url "http://google.com/"
-                :query-params {:foo :bar}}
-               {:exoscale.net.http.client.request/async? true
-                :exoscale.net.http.client.response/body-handler :discarding}))
+;; (def c (client {}))
+;; (prn @(request c
+;;                {:method :get :url "http://google.com/"
+;;                 :query-params {:foo :bar}}
+;;                {:exoscale.net.http.client.request/async? true
+;;                 :exoscale.net.http.client.response/body-handler :discarding}))

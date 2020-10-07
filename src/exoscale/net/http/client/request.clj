@@ -1,10 +1,15 @@
 (ns exoscale.net.http.client.request
   (:import (java.io InputStream)
+           (java.net URI)
+           (java.time Duration)
            (java.util.function Supplier)
            (java.net.http
+            HttpRequest
             HttpRequest$BodyPublishers
             HttpRequest$BodyPublisher
-            HttpRequest$BodyPublishers)))
+            HttpRequest$BodyPublishers))
+  (:require [clojure.string :as str]
+            [exoscale.net.http.client.enum :as enum]))
 
 (defprotocol BodyPublisher
   (-body-publisher [x]))
@@ -39,3 +44,36 @@
   nil
   (-body-publisher [_]
     (HttpRequest$BodyPublishers/noBody)))
+
+(defn http-request
+  [url query method body headers timeout version expect-continue?]
+  (let [builder (doto (HttpRequest/newBuilder)
+                  (.uri (URI. (cond-> url
+                                query
+                                (str "?" query)))))]
+    (case method
+      :get
+      (.GET builder)
+      :delete
+      (.DELETE builder)
+      :post
+      (.POST builder (-body-publisher body))
+      :put
+      (.PUT builder (-body-publisher body))
+      ;; else
+      (.method builder
+               (-> (name method) str/upper-case)
+               (-body-publisher body)))
+
+    (run! (fn [[k v]]
+            (.header builder (name k) (str v)))
+          headers)
+
+    (cond-> builder
+      version
+      (.version (enum/version version))
+      timeout
+      (.timeout (Duration/ofMillis timeout))
+      expect-continue?
+      (.expectContinue expect-continue?)
+      :then (.build))))
