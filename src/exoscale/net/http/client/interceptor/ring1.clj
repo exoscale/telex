@@ -8,30 +8,36 @@
 
 (defn- ring1->http-request
   ^HttpRequest
-  [{:keys [url query method body headers timeout version
-           expect-continue?]
+  [{:ring.request/keys [url query method body headers timeout version
+                        expect-continue?]
     :or {method :get}}]
   (request/http-request url query method body headers timeout version
                         expect-continue?))
 
 (defn- http-response->ring1
   [^HttpResponse http-response]
-  {:status (response/status http-response)
-   :body (response/body http-response)
-   :headers (response/headers->map http-response)})
+  {:ring.response/status (response/status http-response)
+   :ring.response/body (response/body http-response)
+   :ring.response/headers (response/headers->map http-response)})
 
 (def interceptor
   {:name ::ring1
-   :enter (fn [{:as ctx :keys [request]}]
-            (assoc ctx :exoscale.net.http/request (ring1->http-request request)))
-   :leave (fn [{:as ctx :exoscale.net.http/keys [response]}]
-            (assoc ctx :response (http-response->ring1 response)))})
+   :enter (fn [ctx]
+            (assoc ctx :exoscale.net.http/request (ring1->http-request ctx)))
+   :leave (fn [ctx]
+            (into ctx (http-response->ring1 (:exoscale.net.http/response ctx))))})
 
 (def interceptor-chain
-  [{:leave (fn [ctx] (:response ctx))}
-   (interceptor/throw-on-err-status-interceptor [:response])
+  [{:leave (fn [ctx]
+             (reduce-kv (fn [m k v]
+                          (cond-> m
+                            (not (namespace k))
+                            (assoc k v)))
+                        ctx
+                        ctx))}
+   (interceptor/throw-on-err-status-interceptor [:ring.response/status])
    {:enter (-> interceptor/encode-query-params
-               (ix/in [:request :query-params])
-               (ix/out [:request :query]))}
+               (ix/in [:ring.request/query-params])
+               (ix/out [:ring.request/query]))}
    #'interceptor
    #'interceptor/send-interceptor])

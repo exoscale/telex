@@ -25,7 +25,7 @@
    :enter (fn [ctx]
             (assoc ctx :exoscale.net.http/request (ring2->http-request ctx)))
    :leave (fn [ctx]
-            (into ctx (http-response->ring2 ctx)))})
+            (into ctx (http-response->ring2 (:exoscale.net.http/response ctx))))})
 
 (def interceptor-chain
   [{:leave (fn [ctx] (:response ctx))}

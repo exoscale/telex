@@ -44,9 +44,10 @@
   #{200 201 202 203 204 205 206 207 300 301 302 303 304 307 308})
 
 (defn throw-on-err-status-interceptor
-  [response-path]
-  {:leave (fn [{:as ctx :exoscale.net.http/keys [response]}]
+  [status-path]
+  {:leave (fn [ctx]
+            (prn )
             (when-not (contains? ok-status
-                                 (response/status response))
-              (ex-http/response->ex-info! (get-in ctx response-path)))
+                                 (response/status (:exoscale.net.http/response ctx)))
+              (ex-http/response->ex-info! (get-in ctx status-path)))
             ctx)})

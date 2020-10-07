@@ -24,13 +24,17 @@
     client))
 
 (defn ring1-request
-  ([client request]
-   (ring1-request client request nil))
-  ([client request ctx]
-   (ix/execute (assoc ctx
-                      :exoscale.net.http/client client
-                      :request request)
-               (:interceptor-chain ctx ring1/interceptor-chain))))
+  [client ctx]
+  (let [ctx (reduce-kv (fn [m k v]
+                         (assoc m
+                                (if (namespace k)
+                                  k
+                                  (keyword "ring.request" (name k)))
+                                v))
+                       ctx
+                       ctx)]
+    (ix/execute (assoc ctx :exoscale.net.http/client client)
+                (:interceptor-chain ctx ring1/interceptor-chain))))
 
 (defn ring2-request
   [client ctx]
@@ -40,29 +44,10 @@
 
 (def request ring1-request)
 
-(defn get
-  [client request]
-  (ring1-request client
-                 (assoc request :method :get)))
-
-(defn post
-  [client request]
-  (ring1-request client
-                 (assoc request :method :post)))
-
-(defn put
-  [client request]
-  (ring1-request client
-                 (assoc request :method :put)))
-
-(defn delete
-  [client request]
-  (ring1-request client
-                 (assoc request :method :delete)))
-
 ;; (def c (client {}))
 ;; (prn @(request c
-;;                {:method :get :url "http://google.com/"
-;;                 :query-params {:foo :bar}}
-;;                {:exoscale.net.http.client.request/async? true
+;;                {:method :get
+;;                 :url "http://google.com/"
+;;                 :query-params {:foo :bar}
+;;                 :exoscale.net.http.client.request/async? true
 ;;                 :exoscale.net.http.client.response/body-handler :discarding}))
