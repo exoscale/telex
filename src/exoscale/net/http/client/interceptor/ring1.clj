@@ -27,17 +27,29 @@
    :leave (fn [ctx]
             (into ctx (http-response->ring1 (:exoscale.net.http/response ctx))))})
 
+(def query-params
+  {:name ::query-params
+   :enter
+   (-> interceptor/encode-query-params
+       (ix/in [:ring.request/query-params])
+       (ix/out [:ring.request/query]))})
+
+(def form-params
+  {:name ::form-params
+   :enter (-> interceptor/encode-query-params
+              (ix/in [:ring.request/form-params])
+              (ix/out [:ring.request/body]))})
+
 (def interceptor-chain
   [{:leave (fn [ctx]
              (reduce-kv (fn [m k v]
                           (cond-> m
-                            (not (namespace k))
-                            (assoc k v)))
+                            (= (namespace k) "ring.response")
+                            (assoc (keyword (name k)) v)))
                         ctx
                         ctx))}
    (interceptor/throw-on-err-status-interceptor [:ring.response/status])
-   {:enter (-> interceptor/encode-query-params
-               (ix/in [:ring.request/query-params])
-               (ix/out [:ring.request/query]))}
+   query-params
+   form-params
    #'interceptor
    #'interceptor/send-interceptor])

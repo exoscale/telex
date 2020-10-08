@@ -7,7 +7,7 @@
                  [exoscale/ex "0.3.15"]
                  [exoscale/ex-auspex "0.3.15"]
                  [exoscale/ex-http "0.3.15"]
-                 [cc.qbits/auspex "0.1.0-alpha2"]
+                 [cc.qbits/auspex "0.1.0-alpha3"]
                  [cc.qbits/commons "0.5.1"]]
   :profiles {:dev  {:dependencies [[manifold "0.1.8"]
                                    [org.clojure/core.async "1.3.610"]]}

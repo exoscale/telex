@@ -9,20 +9,20 @@
 
 (defn encode-query-params
   [query-params]
-  (transduce (comp (map (fn [[k v]]
-                          [(name k) "=" (u/url-encode v)]))
-                   (interpose "&")
-                   cat)
-             u/string-builder
-             query-params))
+  (when (seq query-params)
+    (transduce (comp (map (fn [[k v]]
+                            [(name k) "=" (u/url-encode v)]))
+                     (interpose "&")
+                     cat)
+               u/string-builder
+               query-params)))
 
 (def send-interceptor
   {:name ::send
    :enter (fn [{:as ctx
                 :exoscale.net.http/keys [request ^HttpClient
-                                         client
-                                         response-handler-executor]
-                :or {response-handler-executor (exe/fork-join-executor)}}]
+                                         client]
+                :exoscale.net.http.response/keys [executor]}]
             (let [{:exoscale.net.http.client.response/keys [body-handler handler-opts]
                    :exoscale.net.http.client.request/keys [async?]
                    :or {body-handler :input-stream}} ctx
@@ -32,7 +32,7 @@
                     (ax/then (fn [response]
                                (assoc ctx
                                       :exoscale.net.http/response response))
-                             response-handler-executor))
+                             executor))
                 (assoc ctx
                        :exoscale.net.http/response
                        (.send client
@@ -46,8 +46,7 @@
 (defn throw-on-err-status-interceptor
   [status-path]
   {:leave (fn [ctx]
-            (prn )
             (when-not (contains? ok-status
                                  (response/status (:exoscale.net.http/response ctx)))
-              (ex-http/response->ex-info! (get-in ctx status-path)))
+              (ex-http/response->ex-info! (assoc ctx :status (get-in ctx status-path))))
             ctx)})
