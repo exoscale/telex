@@ -3,15 +3,14 @@
             exoscale.interceptor.auspex
             [exoscale.net.http.client.response :as response]
             [exoscale.net.http.client.utils :as u]
-            [qbits.auspex :as ax]
-            [qbits.auspex.executor :as exe])
+            [qbits.auspex :as ax])
   (:import (java.net.http HttpClient)))
 
 (defn encode-query-params
   [query-params]
   (when (seq query-params)
     (transduce (comp (map (fn [[k v]]
-                            [(name k) "=" (u/url-encode v)]))
+                            [(u/url-encode (name k)) "=" (u/url-encode v)]))
                      (interpose "&")
                      cat)
                u/string-builder
@@ -21,9 +20,10 @@
   {:name ::send
    :enter (fn [{:as ctx
                 :exoscale.net.http/keys [request ^HttpClient
-                                         client]
-                :exoscale.net.http.response/keys [executor]}]
-            (let [{:exoscale.net.http.client.response/keys [body-handler handler-opts]
+                                         client]}]
+            (let [{:exoscale.net.http.client.response/keys [body-handler
+                                                            handler-opts
+                                                            executor]
                    :exoscale.net.http.client.request/keys [async?]
                    :or {body-handler :input-stream}} ctx
                   body-handler (response/body-handler body-handler handler-opts)]

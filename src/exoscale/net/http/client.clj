@@ -13,16 +13,18 @@
     (option/set-options! b options)
     (.build b)))
 
-(def default-opts
+(def default-client-opts
   {:exoscale.net.http.client.option/follow-redirects :normal
-   :exoscale.net.http.client.option/version :http-2
-   :exoscale.net.http.client.response/body-handler :input-stream
+   :exoscale.net.http.client.option/version :http-2})
+
+(def default-request-opts
+  {:exoscale.net.http.client.response/body-handler :input-stream
+   :exoscale.net.http.client.request/async? true
    :exoscale.net.http.client.response/executor (exe/work-stealing-executor)})
 
 (defn client
   [opts]
-  (let [client (build (merge default-opts opts))]
-    client))
+  (build (into default-client-opts opts)))
 
 (defn ring1-request
   [client ctx]
@@ -33,14 +35,15 @@
                                   k
                                   (keyword "ring.request" (name k)))
                                 v))
-                       ctx
+                       default-request-opts
                        ctx)]
     (ix/execute (assoc ctx :exoscale.net.http/client client)
                 (:interceptor-chain ctx ring1/interceptor-chain))))
 
 (defn ring2-request
   [client ctx]
-  (ix/execute (assoc ctx :exoscale.net.http/client client)
+  (ix/execute (assoc (into default-request-opts ctx)
+                     :exoscale.net.http/client client)
               (:interceptor-chain ctx ring2/interceptor-chain)))
 
 (def request ring1-request)
