@@ -28,17 +28,9 @@
 
 (defn ring1-request
   [client ctx]
-  ;; set the ring1 request to its own namespace
-  (let [ctx (reduce-kv (fn [m k v]
-                         (assoc m
-                                (if (namespace k)
-                                  k
-                                  (keyword "ring.request" (name k)))
-                                v))
-                       default-request-opts
-                       ctx)]
-    (ix/execute (assoc ctx :exoscale.net.http/client client)
-                (:interceptor-chain ctx ring1/interceptor-chain))))
+  (ix/execute (assoc (into default-request-opts ctx)
+                     :exoscale.net.http/client client)
+              (:interceptor-chain ctx ring1/interceptor-chain)))
 
 (defn ring2-request
   [client ctx]
