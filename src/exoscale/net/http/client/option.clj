@@ -45,10 +45,8 @@
   (.version b (enum/version version)))
 
 (defmethod set-option! :default
-  [k b v]
-  (if (simple-keyword? k)
-    (set-option! (keyword "exoscale.net.http.client.option" k) b v)
-    b))
+  [_ b _]
+  b)
 
 (defn set-options!
   [builder options]
