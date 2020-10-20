@@ -1,5 +1,4 @@
 (ns exoscale.net.http.client
-  (:refer-clojure :exclude [get])
   (:require [exoscale.interceptor :as ix]
             [exoscale.net.http.client.interceptor.ring1 :as ring1]
             [exoscale.net.http.client.interceptor.ring2 :as ring2]
@@ -14,47 +13,27 @@
     (.build b)))
 
 (def default-client-opts
-  {:exoscale.net.http.client.option/follow-redirects :normal
-   :exoscale.net.http.client.option/version :http-2})
+  #:exoscale.net.http.client{:follow-redirects :normal
+                             :version :http-2})
 
 (def default-request-opts
-  {:exoscale.net.http.client.response/body-handler :input-stream
-   :exoscale.net.http.client.request/async? true
-   :exoscale.net.http.client.response/executor (exe/work-stealing-executor)})
+  (merge #:exoscale.net.http.client.request{:async? true}
+         #:exoscale.net.http.client.response{:executor (exe/work-stealing-executor)}))
 
 (defn client
   [opts]
   (build (into default-client-opts opts)))
 
-(defn ring1-request
-  [client ctx]
-  (ix/execute (assoc (into default-request-opts ctx)
-                     :exoscale.net.http/client client)
-              (:interceptor-chain ctx ring1/interceptor-chain)))
+(defn- make-request-handler
+  [chain]
+  (fn [client ctx]
+    [client ctx]
+    (ix/execute (assoc (into default-request-opts ctx)
+                       :exoscale.net.http/client client)
+                (:interceptor-chain ctx chain))))
 
-(defn ring2-request
-  [client ctx]
-  (ix/execute (assoc (into default-request-opts ctx)
-                     :exoscale.net.http/client client)
-              (:interceptor-chain ctx ring2/interceptor-chain)))
-
-(def request ring1-request)
-
-(defn- method-fn
-  [method]
-  (fn req
-    ([client url]
-     (req client url {}))
-    ([client url r]
-     (request client
-              (assoc r
-                     :method method
-                     :url url)))))
-
-(def get (method-fn :get))
-(def post (method-fn :post))
-(def put (method-fn :put))
-(def delete (method-fn :delete))
+(def request (make-request-handler ring1/interceptor-chain))
+(def request2 (make-request-handler ring2/interceptor-chain))
 
 ;; (def c (client {}))
 ;; (prn @(request c

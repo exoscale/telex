@@ -20,18 +20,30 @@
                   :body (response/body http-response)
                   :headers (response/headers->map http-response)})
 
-(def interceptor
-  {:name ::ring2
+(def request-interceptor
+  {:name ::request
    :enter (fn [ctx]
             (assoc ctx :exoscale.net.http/request (ring2->http-request ctx)))
    :leave (fn [ctx]
             (into ctx (http-response->ring2 (:exoscale.net.http/response ctx))))})
 
+(def form-params-interceptor
+  {:name ::form-params
+   :enter (-> interceptor/encode-query-params
+              (ix/in [:ring.request/form-params])
+              (ix/out [:ring.request/body]))})
+
+(def query-params-interceptor
+  {:name ::query-params
+   :enter
+   (-> interceptor/encode-query-params
+       (ix/in [:ring.request/query-params])
+       (ix/out [:ring.request/query]))})
+
 (def interceptor-chain
   [{:leave (fn [ctx] (:response ctx))}
    (interceptor/throw-on-err-status-interceptor [:response])
-   {:enter (-> interceptor/encode-query-params
-               (ix/in [:request :query-params])
-               (ix/out [:request :query]))}
-   #'interceptor
-   #'interceptor/send-interceptor])
+   query-params-interceptor
+   form-params-interceptor
+   request-interceptor
+   interceptor/send-interceptor])
