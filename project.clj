@@ -8,7 +8,7 @@
                  [exoscale/ex "0.3.15"]
                  [exoscale/ex-auspex "0.3.15"]
                  [exoscale/ex-http "0.3.15"]
-                 [cc.qbits/auspex "0.1.0-alpha3"]
+                 [cc.qbits/auspex "0.1.0-alpha4"]
                  [cc.qbits/commons "0.5.2"]]
   :profiles {:dev  {:dependencies []}
              :test {:dependencies []}}
