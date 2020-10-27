@@ -12,6 +12,8 @@ By default it supports ring and ring2 style request/response, but you
 could also hit the response/request protocol functions direclty if you
 want/need to use a more imperative style (and more gc friendly) api.
 
+## Usage
+
 By default it will use the ring1 style api:
 
 ``` clj
@@ -52,7 +54,12 @@ Request options:
 
 * `exoscale.net.http.client.request/async?` (defaults  to true)
 
-Request body is handled via `exoscale.net.http.client.request/BodyPublisher` by default it will handle: bytes, string, input-stream and HttpRequest$BodyPublishers.
+Request body is handled via
+`exoscale.net.http.client.request/BodyPublisher` by default it will
+handle: bytes, string, input-stream and HttpRequest$BodyPublishers.
+
+For now the docs are almost non-existant but the source is quite
+minimal. That will come in time, once the api stabilizes.
 
 ## Documentation
 
@@ -65,10 +72,6 @@ net-http is [available on Clojars](https://clojars.org/exoscale/net-http).
 Add this to your dependencies:
 
 [![Clojars Project](https://img.shields.io/clojars/v/exoscale/net-http.svg)](https://clojars.org/exoscale/net-http)
-
-## Usage
-
-
 
 ## License
 
