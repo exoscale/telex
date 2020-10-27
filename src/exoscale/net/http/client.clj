@@ -33,13 +33,3 @@
 
 (def request (make-request-handler ring1/interceptor-chain))
 (def request2 (make-request-handler ring2/interceptor-chain))
-
-;; (def c (client {}))
-;; (prn @(request c
-;;                {:method :get
-;;                 :url "http://google.com/"
-;;                 :query-params {:foo :bar}
-;;                 :form-params {:foo :bar1}
-;;                 :exoscale.net.http.client.request/async? true
-;;                 ;; :exoscale.net.http.client.response/body-handler :discarding
-;;                 }))

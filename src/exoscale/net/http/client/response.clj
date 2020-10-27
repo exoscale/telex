@@ -20,66 +20,68 @@
   (headers [http-response]
     (-> http-response .headers .map)))
 
-(defmulti body-handler (fn [k _opts] k))
+(defmulti body-handler :exoscale.net.http.client.response/body-handler)
 
 (defmethod body-handler :discarding
-  [_ _]
+  [_ctx]
   (HttpResponse$BodyHandlers/discarding))
 
 (defmethod body-handler :string
-  [_ _]
+  [_ctx]
   (HttpResponse$BodyHandlers/ofString))
 
 (defmethod body-handler :byte-array
-  [_ _]
+  [_ctx]
   (HttpResponse$BodyHandlers/ofByteArray))
 
 (defmethod body-handler :input-stream
-  [_ _]
+  [_ctx]
   (HttpResponse$BodyHandlers/ofInputStream))
 
 (defmethod body-handler :publisher
-  [_ _]
+  [_ctx]
   (HttpResponse$BodyHandlers/ofPublisher))
 
 (defmethod body-handler :byte-array-consumer
-  [_ {:keys [consumer]}]
+  [{:exoscale.net.http.client.response.body-handler/keys [consumer]}]
   (HttpResponse$BodyHandlers/ofByteArrayConsumer consumer))
 
 (defmethod body-handler :file
-  [_ {:keys [file]}]
+  [{:exoscale.net.http.client.response.body-handler/keys [file]}]
   (HttpResponse$BodyHandlers/ofFile file))
 
 (defmethod body-handler :file-download
-  [_ {:keys [path opts]}]
+  [{:exoscale.net.http.client.response.body-handler/keys [path opts]}]
   (HttpResponse$BodyHandlers/ofFileDownload path opts))
 
 (defmethod body-handler :subscriber
-  [_ {:keys [subscriber]}]
+  [{:exoscale.net.http.client.response.body-handler/keys [subscriber]}]
   (HttpResponse$BodyHandlers/fromSubscriber subscriber))
 
 (defmethod body-handler :line-subscriber
-  [_ {:keys [subscriber]}]
+  [{:exoscale.net.http.client.response.body-handler/keys [subscriber]}]
   (HttpResponse$BodyHandlers/fromLineSubscriber subscriber))
 
 (defmethod body-handler :buffering
-  [_ {:keys [buffer buffer-size]}]
+  [{:exoscale.net.http.client.response.body-handler/keys [buffer buffer-size]}]
   (HttpResponse$BodyHandlers/buffering buffer
                                        buffer-size))
 
 (defmethod body-handler :replacing
-  [_ {:keys [value]}]
+  [{:exoscale.net.http.client.response.body-handler/keys [value]}]
   (HttpResponse$BodyHandlers/replacing value))
 
 (defmethod body-handler :lines
-  [_ _]
+  [_ctx]
   (HttpResponse$BodyHandlers/ofLines))
 
 (defmethod body-handler :default
-  [_ x]
-  (cond
-    (ifn? x) (x)
-    (instance? HttpResponse$BodyHandler x) x))
+  [ctx]
+  (let [bh (:exoscale.net.http.client.response/body-handler ctx) ]
+    (cond
+      (fn? bh) (bh)
+      (instance? HttpResponse$BodyHandler bh) bh
+      :else (HttpResponse$BodyHandlers/ofInputStream))))
 
 (defn headers->map
   [^HttpResponse http-response]

@@ -21,12 +21,9 @@
    :enter (fn [{:as ctx
                 :exoscale.net.http/keys [request ^HttpClient
                                          client]}]
-            (let [{:exoscale.net.http.client.response/keys [body-handler
-                                                            handler-opts
-                                                            executor]
-                   :exoscale.net.http.client.request/keys [async?]
-                   :or {body-handler :input-stream}} ctx
-                  body-handler (response/body-handler body-handler handler-opts)]
+            (let [{:exoscale.net.http.client.response/keys [executor]
+                   :exoscale.net.http.client.request/keys [async?]} ctx
+                  body-handler (response/body-handler ctx)]
               (if async?
                 (-> (.sendAsync client request body-handler)
                     (ax/then (fn [response]
