@@ -31,7 +31,7 @@
   (HttpResponse$BodyHandlers/ofString))
 
 (defmethod body-handler :byte-array
-  [_ h]
+  [_ _]
   (HttpResponse$BodyHandlers/ofByteArray))
 
 (defmethod body-handler :input-stream

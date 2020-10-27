@@ -4,8 +4,7 @@
             [exoscale.net.http.client.interceptor.ring2 :as ring2]
             [exoscale.net.http.client.option :as option]
             [qbits.auspex.executor :as exe])
-  (:import
-   (java.net.http HttpClient)))
+  (:import (java.net.http HttpClient)))
 
 (defn build [{:as options}]
   (let [b (HttpClient/newBuilder)]

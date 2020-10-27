@@ -8,4 +8,5 @@
 
 (defn url-encode
   [s]
-  (URLEncoder/encode (str s) "UTF-8"))
+  (URLEncoder/encode (str s)
+                     "UTF-8"))

@@ -39,7 +39,7 @@
                               request
                               body-handler)))))})
 
-;; stolen from clj-http
+;; borrowed from clj-http
 (def ok-status
   #{200 201 202 203 204 205 206 207 300 301 302 303 304 307 308})
 

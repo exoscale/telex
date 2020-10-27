@@ -26,8 +26,7 @@
   InputStream
   (-body-publisher [is]
     (HttpRequest$BodyPublishers/ofInputStream
-     (reify Supplier
-       (get [_] is))))
+     (reify Supplier (get [_] is))))
 
   HttpRequest$BodyPublisher
   (-body-publisher [p]
