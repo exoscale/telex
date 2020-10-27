@@ -77,7 +77,7 @@
 
 (defmethod body-handler :default
   [ctx]
-  (let [bh (:exoscale.net.http.client.response/body-handler ctx) ]
+  (let [bh (:exoscale.net.http.client.response/body-handler ctx)]
     (cond
       (fn? bh) (bh)
       (instance? HttpResponse$BodyHandler bh) bh

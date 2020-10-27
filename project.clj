@@ -12,5 +12,7 @@
                  [cc.qbits/commons "0.5.2"]]
   :profiles {:dev  {:dependencies []}
              :test {:dependencies []}}
+  :plugins [[lein-cljfmt "0.7.0"]]
+  :cljfmt {:remove-multiple-non-indenting-spaces? true}
   :pedantic? :warn
   :global-vars {*warn-on-reflection* true})
