@@ -27,8 +27,9 @@
   (HttpResponse$BodyHandlers/discarding))
 
 (defmethod body-handler :string
-  [_ctx]
-  (HttpResponse$BodyHandlers/ofString))
+  [{:exoscale.net.http.client.response.body-handler/keys [charset]
+    :or {charset "UTF-8"}}]
+  (HttpResponse$BodyHandlers/ofString charset))
 
 (defmethod body-handler :byte-array
   [_ctx]
@@ -43,7 +44,7 @@
   (HttpResponse$BodyHandlers/ofPublisher))
 
 (defmethod body-handler :byte-array-consumer
-  [{:exoscale.net.http.client.response.body-handler/keys [consumer]}]
+  [{:exoscale.net.http.client.response.body-handler/keys [byte-array-consumer]}]
   (HttpResponse$BodyHandlers/ofByteArrayConsumer consumer))
 
 (defmethod body-handler :file

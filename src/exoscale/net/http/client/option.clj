@@ -1,6 +1,7 @@
 (ns exoscale.net.http.client.option
   (:require [exoscale.net.http.client.enum :as enum])
-  (:import (java.net.http HttpClient$Builder)))
+  (:import (java.net.http HttpClient$Builder)
+           (java.time Duration)))
 
 (defmulti set-option! (fn [k _builder _option] k))
 
@@ -10,7 +11,7 @@
 
 (defmethod set-option! :exoscale.net.http.client/connect-timeout
   [_ ^HttpClient$Builder b timeout-ms]
-  (.connectTimeout b timeout-ms))
+  (.connectTimeout b (Duration/ofMillis timeout-ms)))
 
 (defmethod set-option! :exoscale.net.http.client/cookie-handler
   [_ ^HttpClient$Builder b cookie-handler]
