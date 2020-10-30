@@ -45,7 +45,7 @@
 
 (defmethod body-handler :byte-array-consumer
   [{:exoscale.net.http.client.response.body-handler/keys [byte-array-consumer]}]
-  (HttpResponse$BodyHandlers/ofByteArrayConsumer consumer))
+  (HttpResponse$BodyHandlers/ofByteArrayConsumer byte-array-consumer))
 
 (defmethod body-handler :file
   [{:exoscale.net.http.client.response.body-handler/keys [file]}]
