@@ -1,4 +1,4 @@
-(defproject exoscale/net-http "0.1.0-alpha4"
+(defproject exoscale/net-http "0.1.0-alpha5-SNAPSHOT"
   :description "java.net.http helpers"
   :license {:name "ISC"}
   :url "https://github.com/exoscale/net-http"
