@@ -62,8 +62,8 @@
               (ix/out [:ring1.request/body]))})
 
 (def interceptor-chain
-  [ring-format-interceptor
-   (interceptor/throw-on-err-status-interceptor [:ring1.response/status])
+  [(interceptor/throw-on-err-status-interceptor [:status])
+   ring-format-interceptor
    query-params-interceptor
    form-params-interceptor
    request-interceptor

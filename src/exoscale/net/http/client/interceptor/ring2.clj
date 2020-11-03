@@ -41,8 +41,7 @@
        (ix/out [:ring.request/query]))})
 
 (def interceptor-chain
-  [{:leave (fn [ctx] (:response ctx))}
-   (interceptor/throw-on-err-status-interceptor [:response])
+  [(interceptor/throw-on-err-status-interceptor [:ring.response/status])
    query-params-interceptor
    form-params-interceptor
    request-interceptor

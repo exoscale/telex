@@ -61,6 +61,23 @@ handle: bytes, string, input-stream and HttpRequest$BodyPublishers.
 For now the docs are almost non-existant but the source is quite
 minimal. That will come in time, once the api stabilizes.
 
+## Exceptional http statuses
+
+Exceptional http statuses will cause a throw with an exoscale.ex
+anomaly type ex-info. You can see the mapping here: https://github.com/exoscale/ex/blob/master/modules/ex-http/src/clj/exoscale/ex/http.clj.
+
+You can disable that by modifying the interceptor chain used by `request` calls
+
+## Things it doesn't do
+
+Right now we do not aim with clj-http compatibility, it's
+intentionally minimalistic, this make it very predictable and low
+overhead.  If you need special handling of array params
+(`?a[]=foo&a[]=bar`, etc), multipart upload and these kind things you
+have to create interceptors yourself to do it, it's quite easy, most
+libraries that did that just copy some of the helper namespaces from
+clj-http, we'd suggest you'd do that on a case by case basis.
+
 ## Documentation
 
 [![cljdoc badge](https://cljdoc.xyz/badge/exoscale/net-http)](https://cljdoc.xyz/d/exoscale/net-http/CURRENT)
