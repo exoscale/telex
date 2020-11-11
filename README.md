@@ -96,7 +96,7 @@ You will also find all the request context and keys from [exoscale.interceptor](
 
 ## Things it doesn't do
 
-Right now we do not aim with clj-http compatibility, it's
+Right now we do not aim with **full** clj-http compatibility, it's
 intentionally minimalistic, this make it very predictable and low
 overhead.  If you need special handling of array params (by default we
 repeat the param like clj-http, we include no `?a[]=foo&a[]=bar`
