@@ -35,6 +35,17 @@ so it will return a CompletableFuture.
 You can see the various client options in the
 `exoscale.net.http.client.option` ns.
 
+* `:exoscale.net.http.client/authenticator`: authenticator - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/Authenticator.html
+* `:exoscale.net.http.client/connect-timeout`: connection timeout duration (in ms)
+* `:exoscale.net.http.client/cookie-handler`: cookie-handler - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/CookieHandler.html
+* `:exoscale.net.http.client/executor` : executor to be used for asynchronous and dependent tasks - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/Executor.html
+* `:exoscale.net.http.client/follow-redirects`: whether requests will automatically follow redirects issued by the server (`:never`, `:always`, `:normal`)
+* `:exoscale.net.http.client/priority`: priority for any HTTP/2 requests sent from this client (number) -
+* `:exoscale.net.http.client/proxy`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/ProxySelector.html
+* `:exoscale.net.http.client/ssl-context`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLContext.html (do yourself an favor an use `less-awful-ssl`)
+* `:exoscale.net.http.client/ssl-parameters`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLParameters.html
+* `:exoscale.net.http.client/version`: HTTP protocol version (`:http-1-1`, `:http-2`)
+
 You can also pass additional keys to the context (request map) to alter behavior:
 
 Response options:
