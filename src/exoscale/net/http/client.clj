@@ -30,7 +30,7 @@
     [client ctx]
     (ix/execute (assoc (into default-request-opts ctx)
                        :exoscale.net.http/client client)
-                (:interceptor-chain ctx chain))))
+                (:exoscale.net.http.client.request/interceptor-chain ctx chain))))
 
 (def request (make-request-handler ring1/interceptor-chain))
 (def request2 (make-request-handler ring2/interceptor-chain))

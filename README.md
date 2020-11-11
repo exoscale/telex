@@ -32,8 +32,7 @@ By default it will use the ring1 style api:
 It will use the async interface of the underlying client,
 so it will return a CompletableFuture.
 
-You can see the various client options in the
-`exoscale.net.http.client.option` ns.
+Client options (to be passed to the client builder):
 
 * `:exoscale.net.http.client/authenticator`: authenticator - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/Authenticator.html
 * `:exoscale.net.http.client/connect-timeout`: connection timeout duration (in ms)
@@ -50,11 +49,12 @@ You can also pass additional keys to the context (request map) to alter behavior
 
 Request options:
 
-* `exoscale.net.http.client.request/async?` (defaults  to true)
-* `exoscale.net.http.client.request/throw-on-error?` (defaults  to true)
-* `exoscale.net.http.client.request/timeout` request timeout (ms)
-* `exoscale.net.http.client.request/version` HTTP protocol version (`:http-1-1`, `:http-2`)
-* `exoscale.net.http.client.request/expect-continue?` Wheter this request's expect continue setting.
+* `:exoscale.net.http.client.request/async?` (defaults  to true)
+* `:exoscale.net.http.client.request/throw-on-error?` (defaults  to true)
+* `:exoscale.net.http.client.request/timeout` request timeout (ms)
+* `:exoscale.net.http.client.request/version` HTTP protocol version (`:http-1-1`, `:http-2`)
+* `:exoscale.net.http.client.request/expect-continue?` Wheter this request's expect continue setting.
+* `:exoscale.net.http.client.request/interceptor-chain`: Set custom interceptor chain for request handling
 
 
 Request body is handled via
@@ -78,7 +78,6 @@ of them can also take extra arguments:
 `:replacing` `:lines`.
 
 
-
 ## Exceptional http statuses
 
 Exceptional http statuses will cause a throw with an exoscale.ex
@@ -86,15 +85,25 @@ anomaly type ex-info. You can see the mapping here: https://github.com/exoscale/
 
 You can disable that by modifying the interceptor chain used by `request` calls
 
+## Interceptor chain
+
+You will find the following values in the context by default:
+
+* `:exoscale.net.http/client` the current client
+* `:exoscale.net.http.client.request/interceptor-chain` the full chain
+
+You will also find all the request context and keys from [exoscale.interceptor](https://github.com/exoscale/interceptor)
+
 ## Things it doesn't do
 
 Right now we do not aim with clj-http compatibility, it's
 intentionally minimalistic, this make it very predictable and low
-overhead.  If you need special handling of array params
-(`?a[]=foo&a[]=bar`, etc), multipart upload and these kind things you
-have to create interceptors yourself to do it, it's quite easy, most
-libraries that did that just copy some of the helper namespaces from
-clj-http, we'd suggest you'd do that on a case by case basis.
+overhead.  If you need special handling of array params (by default we
+repeast the param, no `?a[]=foo&a[]=bar` handling), multipart upload
+and these kind things you have to create interceptors yourself to do
+it, it's quite easy, most libraries that did that just copy some of
+the helper namespaces from clj-http, we'd suggest you'd do that on a
+case by case basis.
 
 ## Documentation
 

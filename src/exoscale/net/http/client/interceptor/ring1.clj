@@ -44,9 +44,9 @@
 (def request-interceptor
   {:name ::request
    :enter (fn [ctx]
-            (assoc ctx :exoscale.net.http/request (ring1->http-request ctx)))
+            (assoc ctx :exoscale.net.http.client/request (ring1->http-request ctx)))
    :leave (fn [ctx]
-            (into ctx (http-response->ring1 (:exoscale.net.http/response ctx))))})
+            (into ctx (http-response->ring1 (:exoscale.net.http.client/response ctx))))})
 
 (def query-params-interceptor
   {:name ::query-params

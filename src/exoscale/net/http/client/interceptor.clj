@@ -26,8 +26,8 @@
 (def send-interceptor
   {:name ::send
    :enter (fn [{:as ctx
-                :exoscale.net.http/keys [request ^HttpClient
-                                         client]}]
+                :exoscale.net.http/keys [^HttpClient client]
+                :exoscale.net.http.client/keys [request]}]
             (let [{:exoscale.net.http.client.response/keys [executor]
                    :exoscale.net.http.client.request/keys [async?]} ctx
                   body-handler (response/body-handler ctx)]
@@ -35,10 +35,10 @@
                 (-> (.sendAsync client request body-handler)
                     (ax/then (fn [response]
                                (assoc ctx
-                                      :exoscale.net.http/response response))
+                                      :exoscale.net.http.client/response response))
                              executor))
                 (assoc ctx
-                       :exoscale.net.http/response
+                       :exoscale.net.http.client/response
                        (.send client
                               request
                               body-handler)))))})
@@ -54,6 +54,6 @@
    (fn [ctx]
      (when (and (:exoscale.net.http.client.request/throw-on-error? ctx)
                 (not (contains? ok-status
-                                (response/status (:exoscale.net.http/response ctx)))))
+                                (response/status (:exoscale.net.http.client/response ctx)))))
        (ex-http/response->ex-info! (assoc ctx :status (get-in ctx status-path))))
      ctx)})
