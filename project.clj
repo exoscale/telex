@@ -1,7 +1,7 @@
-(defproject exoscale/net-http "0.1.0-alpha7-SNAPSHOT"
+(defproject exoscale/telex "0.1.0-alpha7-SNAPSHOT"
   :description "java.net.http helpers"
   :license {:name "ISC"}
-  :url "https://github.com/exoscale/net-http"
+  :url "https://github.com/exoscale/telex"
   :deploy-repositories [["releases" :clojars] ["snapshots" :clojars]]
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [exoscale/interceptor "0.1.9"]

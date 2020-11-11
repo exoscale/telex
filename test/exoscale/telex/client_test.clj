@@ -1,9 +1,9 @@
-(ns exoscale.net.http.client-test
+(ns exoscale.telex.client-test
   (:require [clojure.test :refer [deftest is use-fixtures]]
             exoscale.ex.test
-            [exoscale.net.http.client.interceptor :as ix]
-            [exoscale.net.http.client.interceptor.ring1 :as r1]
-            [exoscale.net.http.client :as client]))
+            [exoscale.telex.interceptor :as ix]
+            [exoscale.telex.interceptor.ring1 :as r1]
+            [exoscale.telex :as client]))
 
 (def ^:dynamic client)
 (def ^:dynamic request-opts)
@@ -12,7 +12,7 @@
 (use-fixtures :once
   (fn [t]
     (binding [client (client/client {})
-              request-opts (merge #:exoscale.net.http.client.request{:async? false})
+              request-opts (merge #:exoscale.telex.request{:async? false})
               request #(client/request client (merge request-opts %))]
       (t))))
 
@@ -20,14 +20,14 @@
   (is (= 200 (:status (request {:method :get :url "http://google.com"}))))
 
   (is (= 200 (:status (request {:method :get :url "http://google.com"
-                                :exoscale.net.http.client.request/version :http-2}))))
+                                :exoscale.telex.request/version :http-2}))))
 
   (is (= 200 (:status (request {:method :get :url "http://google.com"
-                                :exoscale.net.http.client.request/version :http-1-1}))))
+                                :exoscale.telex.request/version :http-1-1}))))
 
   (is (thrown? java.net.http.HttpTimeoutException
                (request {:method :get :url "http://google.com"
-                         :exoscale.net.http.client.request/timeout 1})))
+                         :exoscale.telex.request/timeout 1})))
 
   (is (thrown-ex-info-type? :exoscale.ex/not-found
                             (request {:method :get :url "http://google.com/404"}))
@@ -38,7 +38,7 @@
       "errors are mapped correctly for GET")
 
   (is (= 405 (:status (request {:method :post :url "http://google.com"
-                                :exoscale.net.http.client.request/throw-on-error? false})))
+                                :exoscale.telex.request/throw-on-error? false})))
       "disabling the throw interceptor"))
 
 (deftest params-test

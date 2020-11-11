@@ -1,4 +1,4 @@
-# net-http
+# telex
 
 Very minimal http(2) client based on jdk11+ HttpClient.
 
@@ -17,7 +17,7 @@ want/need to use a more imperative style (and more gc friendly) api.
 By default it will use the ring1 style api:
 
 ``` clj
-(require '[exoscale.net.http.client :as c])
+(require '[exoscale.telex :as c])
 
 ;; creates a new client instance
 (def c (c/client {}))
@@ -34,31 +34,31 @@ so it will return a CompletableFuture.
 
 Client options (to be passed to the client builder):
 
-* `:exoscale.net.http.client/authenticator`: authenticator - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/Authenticator.html
-* `:exoscale.net.http.client/connect-timeout`: connection timeout duration (in ms)
-* `:exoscale.net.http.client/cookie-handler`: cookie-handler - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/CookieHandler.html
-* `:exoscale.net.http.client/executor` : executor to be used for asynchronous and dependent tasks - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/Executor.html
-* `:exoscale.net.http.client/follow-redirects`: whether requests will automatically follow redirects issued by the server (`:never`, `:always`, `:normal`)
-* `:exoscale.net.http.client/priority`: priority for any HTTP/2 requests sent from this client (number) -
-* `:exoscale.net.http.client/proxy`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/ProxySelector.html
-* `:exoscale.net.http.client/ssl-context`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLContext.html (do yourself an favor an use `less-awful-ssl`)
-* `:exoscale.net.http.client/ssl-parameters`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLParameters.html
-* `:exoscale.net.http.client/version`: HTTP protocol version (`:http-1-1`, `:http-2`)
+* `:exoscale.telex/authenticator`: authenticator - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/Authenticator.html
+* `:exoscale.telex/connect-timeout`: connection timeout duration (in ms)
+* `:exoscale.telex/cookie-handler`: cookie-handler - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/CookieHandler.html
+* `:exoscale.telex/executor` : executor to be used for asynchronous and dependent tasks - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/Executor.html
+* `:exoscale.telex/follow-redirects`: whether requests will automatically follow redirects issued by the server (`:never`, `:always`, `:normal`)
+* `:exoscale.telex/priority`: priority for any HTTP/2 requests sent from this client (number) -
+* `:exoscale.telex/proxy`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/ProxySelector.html
+* `:exoscale.telex/ssl-context`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLContext.html (do yourself an favor an use `less-awful-ssl`)
+* `:exoscale.telex/ssl-parameters`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLParameters.html
+* `:exoscale.telex/version`: HTTP protocol version (`:http-1-1`, `:http-2`)
 
 You can also pass additional keys to the context (request map) to alter behavior
 
 Request options:
 
-* `:exoscale.net.http.client.request/async?` (defaults  to true)
-* `:exoscale.net.http.client.request/throw-on-error?` (defaults  to true)
-* `:exoscale.net.http.client.request/timeout` request timeout (ms)
-* `:exoscale.net.http.client.request/version` HTTP protocol version (`:http-1-1`, `:http-2`)
-* `:exoscale.net.http.client.request/expect-continue?` Wheter this request's expect continue setting.
-* `:exoscale.net.http.client.request/interceptor-chain`: Set custom interceptor chain for request handling
+* `:exoscale.telex.request/async?` (defaults  to true)
+* `:exoscale.telex.request/throw-on-error?` (defaults  to true)
+* `:exoscale.telex.request/timeout` request timeout (ms)
+* `:exoscale.telex.request/version` HTTP protocol version (`:http-1-1`, `:http-2`)
+* `:exoscale.telex.request/expect-continue?` Wheter this request's expect continue setting.
+* `:exoscale.telex.request/interceptor-chain`: Set custom interceptor chain for request handling
 
 
 Request body is handled via
-`exoscale.net.http.client.request/BodyPublisher` by default it will
+`exoscale.telex.request/BodyPublisher` by default it will
 handle: bytes, string, input-stream and HttpRequest$BodyPublishers.
 
 For now the docs are almost non-existant but the source is quite
@@ -66,10 +66,10 @@ minimal. That will come in time, once the api stabilizes.
 
 Response options:
 
-* `:exoscale.net.http.client.response/body-handler`
-* `:exoscale.net.http.client.response/executor`
+* `:exoscale.telex.response/body-handler`
+* `:exoscale.telex.response/executor`
 
-Body handler options are in `exoscale.net.http.client.response`, some
+Body handler options are in `exoscale.telex.response`, some
 of them can also take extra arguments:
 
 - possible values are `:discarding` `:string` `:byte-array`
@@ -89,8 +89,8 @@ You can disable that by modifying the interceptor chain used by `request` calls
 
 You will find the following values in the context by default:
 
-* `:exoscale.net.http/client` the current client
-* `:exoscale.net.http.client.request/interceptor-chain` the full chain
+* `:exoscale.telex/client` the current client
+* `:exoscale.telex.request/interceptor-chain` the full chain
 
 You will also find all the request context and keys from [exoscale.interceptor](https://github.com/exoscale/interceptor)
 
@@ -108,7 +108,7 @@ case by case basis.
 ## ring2 (experimental)
 
 RING2 is not yet stable as a spec, but you can use
-`exoscale.net.http.client/request2` to give it a try. It will return
+`exoscale.telex/request2` to give it a try. It will return
 namespaced keys and change a few original keys from ring1. headers
 handling is identical to ring1 for now, it's not yet clear what ring2
 will settle on (it's under discussion still). The async part of the
@@ -119,15 +119,15 @@ https://github.com/ring-clojure/ring/blob/2.0/SPEC-2.md
 
 ## Documentation
 
-[![cljdoc badge](https://cljdoc.xyz/badge/exoscale/net-http)](https://cljdoc.xyz/d/exoscale/net-http/CURRENT)
+[![cljdoc badge](https://cljdoc.xyz/badge/exoscale/telex)](https://cljdoc.xyz/d/exoscale/telex/CURRENT)
 
 ## Installation
 
-net-http is [available on Clojars](https://clojars.org/exoscale/net-http).
+telex is [available on Clojars](https://clojars.org/exoscale/telex).
 
 Add this to your dependencies:
 
-[![Clojars Project](https://img.shields.io/clojars/v/exoscale/net-http.svg)](https://clojars.org/exoscale/net-http)
+[![Clojars Project](https://img.shields.io/clojars/v/exoscale/telex.svg)](https://clojars.org/exoscale/telex)
 
 ## License
 

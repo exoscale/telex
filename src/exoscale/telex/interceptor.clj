@@ -1,8 +1,8 @@
-(ns exoscale.net.http.client.interceptor
+(ns exoscale.telex.interceptor
   (:require [exoscale.ex.http :as ex-http]
             exoscale.interceptor.auspex
-            [exoscale.net.http.client.response :as response]
-            [exoscale.net.http.client.utils :as u]
+            [exoscale.telex.response :as response]
+            [exoscale.telex.utils :as u]
             [qbits.auspex :as ax])
   (:import (java.net.http HttpClient)))
 
@@ -26,19 +26,18 @@
 (def send-interceptor
   {:name ::send
    :enter (fn [{:as ctx
-                :exoscale.net.http/keys [^HttpClient client]
-                :exoscale.net.http.client/keys [request]}]
-            (let [{:exoscale.net.http.client.response/keys [executor]
-                   :exoscale.net.http.client.request/keys [async?]} ctx
+                :exoscale.telex/keys [request ^HttpClient client]}]
+            (let [{:exoscale.telex.response/keys [executor]
+                   :exoscale.telex.request/keys [async?]} ctx
                   body-handler (response/body-handler ctx)]
               (if async?
                 (-> (.sendAsync client request body-handler)
                     (ax/then (fn [response]
                                (assoc ctx
-                                      :exoscale.net.http.client/response response))
+                                      :exoscale.telex/response response))
                              executor))
                 (assoc ctx
-                       :exoscale.net.http.client/response
+                       :exoscale.telex/response
                        (.send client
                               request
                               body-handler)))))})
@@ -52,8 +51,8 @@
   {:name ::throw-on-error
    :leave
    (fn [ctx]
-     (when (and (:exoscale.net.http.client.request/throw-on-error? ctx)
+     (when (and (:exoscale.telex.request/throw-on-error? ctx)
                 (not (contains? ok-status
-                                (response/status (:exoscale.net.http.client/response ctx)))))
+                                (response/status (:exoscale.telex/response ctx)))))
        (ex-http/response->ex-info! (assoc ctx :status (get-in ctx status-path))))
      ctx)})

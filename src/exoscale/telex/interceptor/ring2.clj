@@ -1,15 +1,15 @@
-(ns exoscale.net.http.client.interceptor.ring2
+(ns exoscale.telex.interceptor.ring2
   (:require [exoscale.interceptor :as ix]
-            [exoscale.net.http.client.interceptor :as interceptor]
-            [exoscale.net.http.client.request :as request]
-            [exoscale.net.http.client.response :as response])
+            [exoscale.telex.interceptor :as interceptor]
+            [exoscale.telex.request :as request]
+            [exoscale.telex.response :as response])
   (:import (java.net.http HttpRequest
                           HttpResponse)))
 
 (defn- ring2->http-request
   ^HttpRequest
   [{:ring.request/keys [url query method body headers]
-    :exoscale.net.http.client.request/keys [timeout version expect-continue?]
+    :exoscale.telex.request/keys [timeout version expect-continue?]
     :or {method :get}}]
   (request/http-request url query method body headers timeout version
                         expect-continue?))
@@ -23,9 +23,9 @@
 (def request-interceptor
   {:name ::request
    :enter (fn [ctx]
-            (assoc ctx :exoscale.net.http.client/request (ring2->http-request ctx)))
+            (assoc ctx :exoscale.telex/request (ring2->http-request ctx)))
    :leave (fn [ctx]
-            (into ctx (http-response->ring2 (:exoscale.net.http.client/response ctx))))})
+            (into ctx (http-response->ring2 (:exoscale.telex/response ctx))))})
 
 (def form-params-interceptor
   {:name ::form-params

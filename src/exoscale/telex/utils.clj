@@ -1,4 +1,4 @@
-(ns exoscale.net.http.client.utils
+(ns exoscale.telex.utils
   (:import (java.net URLEncoder)))
 
 (defn string-builder

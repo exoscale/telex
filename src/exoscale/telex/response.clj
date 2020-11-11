@@ -1,4 +1,4 @@
-(ns exoscale.net.http.client.response
+(ns exoscale.telex.response
   (:import (java.net.http HttpResponse
                           HttpResponse$BodyHandlers
                           HttpResponse$BodyHandler
@@ -20,14 +20,14 @@
   (headers [http-response]
     (-> http-response .headers .map)))
 
-(defmulti body-handler :exoscale.net.http.client.response/body-handler)
+(defmulti body-handler :exoscale.telex.response/body-handler)
 
 (defmethod body-handler :discarding
   [_ctx]
   (HttpResponse$BodyHandlers/discarding))
 
 (defmethod body-handler :string
-  [{:exoscale.net.http.client.response.body-handler/keys [charset]
+  [{:exoscale.telex.response.body-handler/keys [charset]
     :or {charset "UTF-8"}}]
   (HttpResponse$BodyHandlers/ofString charset))
 
@@ -44,32 +44,32 @@
   (HttpResponse$BodyHandlers/ofPublisher))
 
 (defmethod body-handler :byte-array-consumer
-  [{:exoscale.net.http.client.response.body-handler/keys [byte-array-consumer]}]
+  [{:exoscale.telex.response.body-handler/keys [byte-array-consumer]}]
   (HttpResponse$BodyHandlers/ofByteArrayConsumer byte-array-consumer))
 
 (defmethod body-handler :file
-  [{:exoscale.net.http.client.response.body-handler/keys [file]}]
+  [{:exoscale.telex.response.body-handler/keys [file]}]
   (HttpResponse$BodyHandlers/ofFile file))
 
 (defmethod body-handler :file-download
-  [{:exoscale.net.http.client.response.body-handler/keys [path opts]}]
+  [{:exoscale.telex.response.body-handler/keys [path opts]}]
   (HttpResponse$BodyHandlers/ofFileDownload path opts))
 
 (defmethod body-handler :subscriber
-  [{:exoscale.net.http.client.response.body-handler/keys [subscriber]}]
+  [{:exoscale.telex.response.body-handler/keys [subscriber]}]
   (HttpResponse$BodyHandlers/fromSubscriber subscriber))
 
 (defmethod body-handler :line-subscriber
-  [{:exoscale.net.http.client.response.body-handler/keys [subscriber]}]
+  [{:exoscale.telex.response.body-handler/keys [subscriber]}]
   (HttpResponse$BodyHandlers/fromLineSubscriber subscriber))
 
 (defmethod body-handler :buffering
-  [{:exoscale.net.http.client.response.body-handler/keys [buffer buffer-size]}]
+  [{:exoscale.telex.response.body-handler/keys [buffer buffer-size]}]
   (HttpResponse$BodyHandlers/buffering buffer
                                        buffer-size))
 
 (defmethod body-handler :replacing
-  [{:exoscale.net.http.client.response.body-handler/keys [value]}]
+  [{:exoscale.telex.response.body-handler/keys [value]}]
   (HttpResponse$BodyHandlers/replacing value))
 
 (defmethod body-handler :lines
@@ -78,7 +78,7 @@
 
 (defmethod body-handler :default
   [ctx]
-  (let [bh (:exoscale.net.http.client.response/body-handler ctx)]
+  (let [bh (:exoscale.telex.response/body-handler ctx)]
     (cond
       (fn? bh) (bh)
       (instance? HttpResponse$BodyHandler bh) bh

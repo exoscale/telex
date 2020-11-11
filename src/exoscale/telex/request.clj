@@ -1,4 +1,4 @@
-(ns exoscale.net.http.client.request
+(ns exoscale.telex.request
   (:import (java.io InputStream)
            (java.net URI)
            (java.time Duration)
@@ -9,7 +9,7 @@
             HttpRequest$BodyPublisher
             HttpRequest$BodyPublishers))
   (:require [clojure.string :as str]
-            [exoscale.net.http.client.enum :as enum]))
+            [exoscale.telex.enum :as enum]))
 
 (defprotocol BodyPublisher
   (-body-publisher [x]))
