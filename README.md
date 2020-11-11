@@ -99,11 +99,11 @@ You will also find all the request context and keys from [exoscale.interceptor](
 Right now we do not aim with clj-http compatibility, it's
 intentionally minimalistic, this make it very predictable and low
 overhead.  If you need special handling of array params (by default we
-repeast the param, no `?a[]=foo&a[]=bar` handling), multipart upload
-and these kind things you have to create interceptors yourself to do
-it, it's quite easy, most libraries that did that just copy some of
-the helper namespaces from clj-http, we'd suggest you'd do that on a
-case by case basis.
+repeat the param like clj-http, we include no `?a[]=foo&a[]=bar`
+handling), multipart upload and these kind things you have to create
+interceptors yourself to do it, it's quite easy, most libraries that
+did that just copy some of the helper namespaces from clj-http, we'd
+suggest you'd do that on a case by case basis.
 
 ## ring2 (experimental)
 
