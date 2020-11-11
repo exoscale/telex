@@ -6,13 +6,23 @@
             [qbits.auspex :as ax])
   (:import (java.net.http HttpClient)))
 
+(defn- encode-query-param
+  ""
+  [k v]
+  [(u/url-encode (name k))
+   "="
+   (u/url-encode v)])
+
 (defn encode-query-params
   [query-params]
   (when (seq query-params)
-    (transduce (comp (map (fn [[k v]]
-                            [(u/url-encode (name k)) "=" (u/url-encode v)]))
-                     (interpose "&")
-                     cat)
+    (transduce (comp
+                (mapcat (fn [[k v]]
+                          (if (sequential? v)
+                            (map #(encode-query-param k %) v)
+                            [(encode-query-param k v)])))
+                (interpose "&")
+                cat)
                u/string-builder
                query-params)))
 
@@ -42,8 +52,11 @@
 
 (defn throw-on-err-status-interceptor
   [status-path]
-  {:leave (fn [ctx]
-            (when-not (contains? ok-status
-                                 (response/status (:exoscale.net.http/response ctx)))
-              (ex-http/response->ex-info! (assoc ctx :status (get-in ctx status-path))))
-            ctx)})
+  {:name ::throw-on-error
+   :leave
+   (fn [ctx]
+     (when (and (:exoscale.net.http.client.request/throw-on-error? ctx)
+                (not (contains? ok-status
+                                (response/status (:exoscale.net.http/response ctx)))))
+       (ex-http/response->ex-info! (assoc ctx :status (get-in ctx status-path))))
+     ctx)})

@@ -16,7 +16,8 @@
                              :version :http-2})
 
 (def default-request-opts
-  (merge #:exoscale.net.http.client.request{:async? true}
+  (merge #:exoscale.net.http.client.request{:async? true
+                                            :throw-on-error? true}
          #:exoscale.net.http.client.response{:executor (exe/work-stealing-executor)}))
 
 (defn client
