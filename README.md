@@ -105,6 +105,18 @@ it, it's quite easy, most libraries that did that just copy some of
 the helper namespaces from clj-http, we'd suggest you'd do that on a
 case by case basis.
 
+## ring2 (experimental)
+
+RING2 is not yet stable as a spec, but you can use
+`exoscale.net.http.client/request2` to give it a try. It will return
+namespaced keys and change a few original keys from ring1. headers
+handling is identical to ring1 for now, it's not yet clear what ring2
+will settle on (it's under discussion still). The async part of the
+spec is also intentionally ignored for now since the jdk client relies
+on Flow & CompletableFuture.
+
+https://github.com/ring-clojure/ring/blob/2.0/SPEC-2.md
+
 ## Documentation
 
 [![cljdoc badge](https://cljdoc.xyz/badge/exoscale/net-http)](https://cljdoc.xyz/d/exoscale/net-http/CURRENT)
