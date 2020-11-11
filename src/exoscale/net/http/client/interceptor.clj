@@ -7,11 +7,8 @@
   (:import (java.net.http HttpClient)))
 
 (defn- encode-query-param
-  ""
   [k v]
-  [(u/url-encode (name k))
-   "="
-   (u/url-encode v)])
+  [(u/url-encode (name k)) "=" (u/url-encode v)])
 
 (defn encode-query-params
   [query-params]

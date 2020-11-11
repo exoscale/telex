@@ -53,6 +53,7 @@ of them can also take extra arguments:
 Request options:
 
 * `exoscale.net.http.client.request/async?` (defaults  to true)
+* `exoscale.net.http.client.request/throw-on-error?` (defaults  to true)
 
 Request body is handled via
 `exoscale.net.http.client.request/BodyPublisher` by default it will
