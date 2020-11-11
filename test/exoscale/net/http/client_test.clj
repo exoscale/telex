@@ -19,6 +19,16 @@
 (deftest test-simple-requests-roundrip
   (is (= 200 (:status (request {:method :get :url "http://google.com"}))))
 
+  (is (= 200 (:status (request {:method :get :url "http://google.com"
+                                :exoscale.net.http.client.request/version :http-2}))))
+
+  (is (= 200 (:status (request {:method :get :url "http://google.com"
+                                :exoscale.net.http.client.request/version :http-1-1}))))
+
+  (is (thrown? java.net.http.HttpTimeoutException
+               (request {:method :get :url "http://google.com"
+                         :exoscale.net.http.client.request/timeout 1})))
+
   (is (thrown-ex-info-type? :exoscale.ex/not-found
                             (request {:method :get :url "http://google.com/404"}))
       "errors are mapped correctly for GET")

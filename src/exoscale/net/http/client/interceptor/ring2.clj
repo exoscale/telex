@@ -8,8 +8,8 @@
 
 (defn- ring2->http-request
   ^HttpRequest
-  [{:ring.request/keys [url query method body headers timeout version
-                        expect-continue?]
+  [{:ring.request/keys [url query method body headers]
+    :exoscale.net.http.client.request/keys [timeout version expect-continue?]
     :or {method :get}}]
   (request/http-request url query method body headers timeout version
                         expect-continue?))

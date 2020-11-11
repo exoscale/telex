@@ -46,7 +46,23 @@ You can see the various client options in the
 * `:exoscale.net.http.client/ssl-parameters`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLParameters.html
 * `:exoscale.net.http.client/version`: HTTP protocol version (`:http-1-1`, `:http-2`)
 
-You can also pass additional keys to the context (request map) to alter behavior:
+You can also pass additional keys to the context (request map) to alter behavior
+
+Request options:
+
+* `exoscale.net.http.client.request/async?` (defaults  to true)
+* `exoscale.net.http.client.request/throw-on-error?` (defaults  to true)
+* `exoscale.net.http.client.request/timeout` request timeout (ms)
+* `exoscale.net.http.client.request/version` HTTP protocol version (`:http-1-1`, `:http-2`)
+* `exoscale.net.http.client.request/expect-continue?` Wheter this request's expect continue setting.
+
+
+Request body is handled via
+`exoscale.net.http.client.request/BodyPublisher` by default it will
+handle: bytes, string, input-stream and HttpRequest$BodyPublishers.
+
+For now the docs are almost non-existant but the source is quite
+minimal. That will come in time, once the api stabilizes.
 
 Response options:
 
@@ -61,17 +77,7 @@ of them can also take extra arguments:
 `:file-download` `:subscriber` `:line-subscriber` `:buffering`
 `:replacing` `:lines`.
 
-Request options:
 
-* `exoscale.net.http.client.request/async?` (defaults  to true)
-* `exoscale.net.http.client.request/throw-on-error?` (defaults  to true)
-
-Request body is handled via
-`exoscale.net.http.client.request/BodyPublisher` by default it will
-handle: bytes, string, input-stream and HttpRequest$BodyPublishers.
-
-For now the docs are almost non-existant but the source is quite
-minimal. That will come in time, once the api stabilizes.
 
 ## Exceptional http statuses
 
