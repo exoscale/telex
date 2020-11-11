@@ -1,34 +1,19 @@
 (ns exoscale.telex
   (:require [exoscale.interceptor :as ix]
+            [exoscale.telex.request :as request]
             [exoscale.telex.interceptor.ring1 :as ring1]
             [exoscale.telex.interceptor.ring2 :as ring2]
-            [exoscale.telex.option :as option]
-            [qbits.auspex.executor :as exe])
-  (:import (java.net.http HttpClient)))
-
-(defn build [{:as options}]
-  (let [b (HttpClient/newBuilder)]
-    (option/set-options! b options)
-    (.build b)))
-
-(def default-client-opts
-  #:exoscale.telex{:follow-redirects :normal
-                   :version :http-2})
-
-(def default-request-opts
-  (merge #:exoscale.telex.request{:async? true
-                                  :throw-on-error? true}
-         #:exoscale.telex.response{:executor (exe/work-stealing-executor)}))
+            [exoscale.telex.client :as client]))
 
 (defn client
   [opts]
-  (build (into default-client-opts opts)))
+  (client/build (into client/default-options opts)))
 
 (defn- make-request-handler
   [chain]
   (fn [client ctx]
     [client ctx]
-    (ix/execute (assoc (into default-request-opts ctx)
+    (ix/execute (assoc (into request/default-options ctx)
                        :exoscale.telex/client client)
                 (:exoscale.telex.request/interceptor-chain ctx chain))))
 

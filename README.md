@@ -34,16 +34,16 @@ so it will return a CompletableFuture.
 
 Client options (to be passed to the client builder):
 
-* `:exoscale.telex/authenticator`: authenticator - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/Authenticator.html
-* `:exoscale.telex/connect-timeout`: connection timeout duration (in ms)
-* `:exoscale.telex/cookie-handler`: cookie-handler - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/CookieHandler.html
-* `:exoscale.telex/executor` : executor to be used for asynchronous and dependent tasks - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/Executor.html
-* `:exoscale.telex/follow-redirects`: whether requests will automatically follow redirects issued by the server (`:never`, `:always`, `:normal`)
-* `:exoscale.telex/priority`: priority for any HTTP/2 requests sent from this client (number) -
-* `:exoscale.telex/proxy`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/ProxySelector.html
-* `:exoscale.telex/ssl-context`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLContext.html (do yourself an favor an use `less-awful-ssl`)
-* `:exoscale.telex/ssl-parameters`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLParameters.html
-* `:exoscale.telex/version`: HTTP protocol version (`:http-1-1`, `:http-2`)
+* `:exoscale.telex.client/authenticator`: authenticator - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/Authenticator.html
+* `:exoscale.telex.client/connect-timeout`: connection timeout duration (in ms)
+* `:exoscale.telex.client/cookie-handler`: cookie-handler - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/CookieHandler.html
+* `:exoscale.telex.client/executor` : executor to be used for asynchronous and dependent tasks - https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/Executor.html
+* `:exoscale.telex.client/follow-redirects`: whether requests will automatically follow redirects issued by the server (`:never`, `:always`, `:normal`)
+* `:exoscale.telex.client/priority`: priority for any HTTP/2 requests sent from this client (number) -
+* `:exoscale.telex.client/proxy`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/ProxySelector.html
+* `:exoscale.telex.client/ssl-context`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLContext.html (do yourself an favor an use `less-awful-ssl`)
+* `:exoscale.telex.client/ssl-parameters`: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/net/ssl/SSLParameters.html
+* `:exoscale.telex.client/version`: HTTP protocol version (`:http-1-1`, `:http-2`)
 
 You can also pass additional keys to the context (request map) to alter behavior
 

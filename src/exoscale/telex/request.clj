@@ -1,15 +1,21 @@
 (ns exoscale.telex.request
+  (:require [clojure.string :as str]
+            [exoscale.telex.enum :as enum]
+            [qbits.auspex.executor :as exe])
   (:import (java.io InputStream)
            (java.net URI)
-           (java.time Duration)
-           (java.util.function Supplier)
            (java.net.http
             HttpRequest
             HttpRequest$BodyPublishers
             HttpRequest$BodyPublisher
-            HttpRequest$BodyPublishers))
-  (:require [clojure.string :as str]
-            [exoscale.telex.enum :as enum]))
+            HttpRequest$BodyPublishers)
+           (java.time Duration)
+           (java.util.function Supplier)))
+
+(def default-options
+  (merge #:exoscale.telex.request{:async? true
+                                  :throw-on-error? true}
+         #:exoscale.telex.response{:executor (exe/work-stealing-executor)}))
 
 (defprotocol BodyPublisher
   (-body-publisher [x]))
