@@ -29,8 +29,11 @@ By default it will use the ring1 style api:
                :form-params {:foo :bar1}})
 ```
 
-It will use the async interface of the underlying client,
-so it will return a CompletableFuture.
+It will use the async interface of the underlying client, so it will
+return a CompletableFuture.
+
+telex ships with [auspex](https://github.com/mpenet/auspex/), so you
+have helpers to deal-with/compose CompletableFutures in a fairly simple way.
 
 Client options (to be passed to the client builder):
 
