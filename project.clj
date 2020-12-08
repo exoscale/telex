@@ -9,7 +9,7 @@
                  [exoscale/ex-auspex "0.3.15"]
                  [exoscale/ex-http "0.3.15"]
                  [cc.qbits/auspex "0.1.0-alpha4"]
-                 [cc.qbits/commons "0.5.3"]]
+                 [cc.qbits/commons "1.0.0-alpha3"]]
   :profiles {:dev  {:dependencies []}
              :test {:dependencies []}}
   :plugins [[lein-cljfmt "0.7.0"]]
