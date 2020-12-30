@@ -10,7 +10,7 @@
                  [exoscale/ex-http "0.3.15"]
                  [cc.qbits/auspex "0.1.0-alpha4"]
                  [cc.qbits/commons "1.0.0-alpha3"]]
-  :profiles {:dev  {:dependencies []}
+  :profiles {:dev  {:dependencies [[ring/ring-jetty-adapter    "1.7.1"]]}
              :test {:dependencies []}}
   :plugins [[lein-cljfmt "0.7.0"]]
   :cljfmt {:remove-multiple-non-indenting-spaces? true}
