@@ -2,7 +2,8 @@
   (:import (java.net.http HttpResponse
                           HttpResponse$BodyHandlers
                           HttpResponse$BodyHandler
-                          HttpResponse$BodyHandlers)))
+                          HttpResponse$BodyHandlers)
+           java.nio.charset.Charset))
 
 (defprotocol Response
   (status [http-response] "Returns http status of underlying response")
@@ -29,7 +30,7 @@
 (defmethod body-handler :string
   [{:exoscale.telex.response.body-handler/keys [charset]
     :or {charset "UTF-8"}}]
-  (HttpResponse$BodyHandlers/ofString charset))
+  (HttpResponse$BodyHandlers/ofString (Charset/forName charset)))
 
 (defmethod body-handler :byte-array
   [_ctx]

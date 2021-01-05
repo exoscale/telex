@@ -1,6 +1,8 @@
 (ns exoscale.telex.client-test
   (:require [clojure.test :refer [deftest is use-fixtures]]
             exoscale.ex.test
+            [exoscale.ex :as ex]
+            [exoscale.telex.mocks :as mocks]
             [exoscale.telex.interceptor :as ix]
             [exoscale.telex.interceptor.ring1 :as r1]
             [exoscale.telex :as client]))
@@ -40,6 +42,26 @@
   (is (= 405 (:status (request {:method :post :url "http://google.com"
                                 :exoscale.telex.request/throw-on-error? false})))
       "disabling the throw interceptor"))
+
+(deftest test-body-handler
+  (mocks/with-server 1234 (constantly {:status 200
+                                       :body "Some value"})
+    (let [{:keys [status body]} (request {:method :get
+                                          :url "http://localhost:1234"
+                                          :exoscale.telex.response/body-handler :string})]
+      (is (= 200 status))
+      (is (= "Some value" body)))))
+
+(deftest test-error-handling
+  (mocks/with-server 1234 (constantly {:status 400
+                                       :body "Invalid"})
+    (ex/try+
+      (request {:method :get
+                :url "http://localhost:1234"
+                :exoscale.telex.response/body-handler :string})
+      (catch :exoscale.ex/incorrect {{:keys [status body]} :response}
+        (is (= status 400))
+        (is (= body "Invalid"))))))
 
 (deftest params-test
   (is (= "a=1&b=2" (ix/encode-query-params {:a 1 :b 2})))
