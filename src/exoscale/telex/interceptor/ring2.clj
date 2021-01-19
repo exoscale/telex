@@ -31,7 +31,10 @@
   {:name ::form-params
    :enter (-> interceptor/encode-query-params
               (ix/in [:ring.request/form-params])
-              (ix/out [:ring.request/body]))})
+              (ix/out [:ring.request/body])
+              (ix/when (fn [{:ring.request/keys [form-params body]}]
+                         (and (not body)
+                              (seq form-params)))))})
 
 (def query-params-interceptor
   {:name ::query-params

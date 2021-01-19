@@ -52,16 +52,47 @@
       (is (= 200 status))
       (is (= "Some value" body)))))
 
+(deftest test-post-body
+  (mocks/with-server 1234 (fn [{:keys [body]}] {:status 200 :body body})
+    (let [{:keys [status body]}
+          (request {:method :post
+                    :url "http://localhost:1234"
+                    :exoscale.telex.response/body-handler :string
+                    :body "abc"})]
+      (is (= 200 status))
+      (is (= "abc" body)))))
+
+(deftest test-post-form-params
+  (mocks/with-server 1234 (fn [{:keys [body]}] {:status 200 :body body})
+    (let [{:keys [status body]}
+          (request {:method :post
+                    :url "http://localhost:1234"
+                    :exoscale.telex.response/body-handler :string
+                    :form-params {:a 1}})]
+      (is (= 200 status))
+      (is (= "a=1" body)))))
+
+(deftest test-post-form-params+body
+  (mocks/with-server 1234 (fn [{:keys [body]}] {:status 200 :body body})
+    (let [{:keys [status body]}
+          (request {:method :post
+                    :url "http://localhost:1234"
+                    :exoscale.telex.response/body-handler :string
+                    :form-params {:a 1}
+                    :body "a"})]
+      (is (= 200 status))
+      (is (= "a" body) "body always takes over if specified"))))
+
 (deftest test-error-handling
   (mocks/with-server 1234 (constantly {:status 400
                                        :body "Invalid"})
     (ex/try+
-      (request {:method :get
-                :url "http://localhost:1234"
-                :exoscale.telex.response/body-handler :string})
-      (catch :exoscale.ex/incorrect {{:keys [status body]} :response}
-        (is (= status 400))
-        (is (= body "Invalid"))))))
+     (request {:method :get
+               :url "http://localhost:1234"
+               :exoscale.telex.response/body-handler :string})
+     (catch :exoscale.ex/incorrect {{:keys [status body]} :response}
+       (is (= status 400))
+       (is (= body "Invalid"))))))
 
 (deftest params-test
   (is (= "a=1&b=2" (ix/encode-query-params {:a 1 :b 2})))
