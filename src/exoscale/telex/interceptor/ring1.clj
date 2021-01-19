@@ -10,8 +10,7 @@
   ^HttpRequest
   [{:ring1.request/keys [url query method body headers]
     :exoscale.telex.request/keys [timeout version expect-continue?]
-    :or {method :get}
-    :as ct}]
+    :or {method :get}}]
   (request/http-request url query method body headers timeout version
                         expect-continue?))
 
