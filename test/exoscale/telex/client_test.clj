@@ -52,6 +52,18 @@
       (is (= 200 status))
       (is (= "Some value" body)))))
 
+(deftest form-params-handler
+  (mocks/with-server 1234 (fn [{:keys [body]}]
+                            {:status 200
+                             :body (slurp body)})
+    (let [content "foobar"
+          {:keys [status body]} (request {:method :post
+                                          :url "http://localhost:1234"
+                                          :exoscale.telex.response/body-handler :string
+                                          :body content})]
+      (is (= 200 status))
+      (is (= content body)))))
+
 (deftest test-error-handling
   (mocks/with-server 1234 (constantly {:status 400
                                        :body "Invalid"})
