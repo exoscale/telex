@@ -10,7 +10,8 @@
   ^HttpRequest
   [{:ring1.request/keys [url query method body headers]
     :exoscale.telex.request/keys [timeout version expect-continue?]
-    :or {method :get}}]
+    :or {method :get}
+    :as ct}]
   (request/http-request url query method body headers timeout version
                         expect-continue?))
 
@@ -57,9 +58,11 @@
 
 (def form-params-interceptor
   {:name ::form-params
-   :enter (-> interceptor/encode-query-params
-              (ix/in [:ring1.request/form-params])
-              (ix/out [:ring1.request/body]))})
+   :enter (fn [{:as ctx :ring1.request/keys [form-params]}]
+            (cond-> ctx
+              (seq form-params)
+              (assoc :ring1.request/body
+                     (interceptor/encode-query-params form-params))))})
 
 (def interceptor-chain
   [(interceptor/throw-on-err-status-interceptor [:status])
