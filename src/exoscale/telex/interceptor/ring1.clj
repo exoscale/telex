@@ -59,7 +59,10 @@
   {:name ::form-params
    :enter (-> interceptor/encode-query-params
               (ix/in [:ring1.request/form-params])
-              (ix/out [:ring1.request/body]))})
+              (ix/out [:ring1.request/body])
+              (ix/when (fn [{:ring1.request/keys [form-params body]}]
+                         (and (not body)
+                              (seq form-params)))))})
 
 (def interceptor-chain
   [(interceptor/throw-on-err-status-interceptor [:status])
