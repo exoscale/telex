@@ -70,7 +70,15 @@
                     :exoscale.telex.response/body-handler :string
                     :form-params {:a 1}})]
       (is (= 200 status))
-      (is (= "a=1" body)))))
+      (is (= "a=1" body)))
+
+    (let [{:keys [status body]}
+          (request {:method :post
+                    :url "http://localhost:1234"
+                    :exoscale.telex.response/body-handler :string
+                    :form-params {}})]
+      (is (= 200 status))
+      (is (= "" body)))))
 
 (deftest test-post-form-params+body
   (mocks/with-server 1234 (fn [{:keys [body]}] {:status 200 :body body})
@@ -81,7 +89,16 @@
                     :form-params {:a 1}
                     :body "a"})]
       (is (= 200 status))
-      (is (= "a" body) "body always takes over if specified"))))
+      (is (= "a" body) "body always takes over if specified"))
+
+    (let [{:keys [status body]}
+          (request {:method :post
+                    :url "http://localhost:1234"
+                    :exoscale.telex.response/body-handler :string
+                    :form-params {}
+                    :body "a"})]
+      (is (= 200 status))
+      (is (= "a" body)))))
 
 (deftest test-error-handling
   (mocks/with-server 1234 (constantly {:status 400
