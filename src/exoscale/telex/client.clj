@@ -59,7 +59,7 @@
 
 (def default-options
   #:exoscale.telex.client{:follow-redirects :normal
-                          :version :http-2})
+                          :version :http-1-1})
 
 (defn build [{:as options}]
   (let [b (HttpClient/newBuilder)]
