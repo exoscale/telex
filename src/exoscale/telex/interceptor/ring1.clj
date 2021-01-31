@@ -12,10 +12,11 @@
 
 (defn- ring1->http-request
   ^HttpRequest
-  [{{:keys [url query method body headers] :or {method :get}} :ring/request
+  [{:ring/keys [request]
     :exoscale.telex.request/keys [timeout version expect-continue?]}]
-  (request/http-request url query method body headers timeout version
-                        expect-continue?))
+  (let [{:keys [url query method body headers] :or {method :get}} request]
+    (request/http-request url query method body headers timeout version
+                          expect-continue?)))
 
 (defn- http-response->ring1
   [^HttpResponse http-response]
@@ -30,13 +31,15 @@
                 (assoc :ring/request (select-keys ctx ring-keys))))
    :leave (fn [ctx]
             (-> ctx
+                ;; we just care about the final request output
                 (dissoc :ring/response :ring/request)
                 (conj (:ring/response ctx))))})
 
 (def request-interceptor
   {:name ::request
    :enter (fn [ctx]
-            (assoc ctx :exoscale.telex/request (ring1->http-request ctx)))
+            (assoc ctx
+                   :exoscale.telex/request (ring1->http-request ctx)))
    :leave (fn [ctx]
             (assoc ctx
                    :ring/response
@@ -54,9 +57,9 @@
    :enter (-> interceptor/encode-query-params
               (ix/in [:ring/request :form-params])
               (ix/out [:ring/request :body])
-              (ix/when (fn [{{:keys [form-params body]} :ring/request}]
-                         (and (not body)
-                              (seq form-params)))))})
+              (ix/when (fn [{:ring/keys [request]}]
+                         (and (not (:body request))
+                              (seq (:form-params request))))))})
 
 (def interceptor-chain
   [(interceptor/throw-on-err-status-interceptor [:status])
