@@ -6,10 +6,6 @@
   (:import (java.net.http HttpRequest
                           HttpResponse)))
 
-(def ring-keys [:url :body :method :query :headers :url
-                ;; exts
-                :form-params :query-params])
-
 (defn- ring1->http-request
   ^HttpRequest
   [{:ring/keys [request]
@@ -27,13 +23,24 @@
 (def ring-format-interceptor
   {:name ::map-format-interceptor
    :enter (fn [ctx]
-            (-> (apply dissoc ctx ring-keys)
-                (assoc :ring/request (select-keys ctx ring-keys))))
-   :leave (fn [ctx]
+            ;; we consider all non ns keys, ring-keys
+            (let [request-keys (reduce-kv (fn [m k v]
+                                            (cond-> m
+                                              (not (namespace k))
+                                              (assoc k v)))
+                                          {}
+                                          ctx)]
+              (-> (apply dissoc ctx (keys request-keys))
+                  (assoc :ring/request request-keys))))
+   :leave (fn [{:as ctx :ring/keys [request response]}]
+            ;; we just care about the final request output, hide
+            ;; original request for potential output, put it in meta
+            ;; instead (prevent potential POST secrets leaking in
+            ;; logs)
             (-> ctx
-                ;; we just care about the final request output
                 (dissoc :ring/response :ring/request)
-                (conj (:ring/response ctx))))})
+                (conj response)
+                (vary-meta assoc :ring/request request)))})
 
 (def request-interceptor
   {:name ::request
