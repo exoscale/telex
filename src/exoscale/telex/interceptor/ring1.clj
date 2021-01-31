@@ -32,15 +32,12 @@
                                           ctx)]
               (-> (apply dissoc ctx (keys request-keys))
                   (assoc :ring/request request-keys))))
-   :leave (fn [{:as ctx :ring/keys [request response]}]
+   :leave (fn [{:as ctx :ring/keys [response]}]
             ;; we just care about the final request output, hide
-            ;; original request for potential output, put it in meta
-            ;; instead (prevent potential POST secrets leaking in
-            ;; logs)
+            ;; original request from potential output
             (-> ctx
                 (dissoc :ring/response :ring/request)
-                (conj response)
-                (vary-meta assoc :ring/request request)))})
+                (conj response)))})
 
 (def request-interceptor
   {:name ::request
