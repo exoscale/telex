@@ -12,7 +12,7 @@
 
 (defn- ring1->http-request
   ^HttpRequest
-  [{:ring/keys [request]
+  [{:ring1/keys [request]
     :exoscale.telex.request/keys [timeout version expect-continue?]}]
   (let [{:keys [url query method body headers] :or {method :get}} request]
     (request/http-request url query method body headers timeout version
@@ -29,12 +29,12 @@
    :enter (fn [ctx]
             ;; we consider all non ns keys, ring-keys
             (-> (apply dissoc ctx request-keys)
-                (assoc :ring/request (select-keys ctx request-keys))))
-   :leave (fn [{:as ctx :ring/keys [response]}]
+                (assoc :ring1/request (select-keys ctx request-keys))))
+   :leave (fn [{:as ctx :ring1/keys [response]}]
             ;; we just care about the final request output, hide
             ;; original request from potential output
             (-> ctx
-                (dissoc :ring/response :ring/request)
+                (dissoc :ring1/response :ring1/request)
                 (conj response)))})
 
 (def request-interceptor
@@ -44,22 +44,22 @@
                    :exoscale.telex/request (ring1->http-request ctx)))
    :leave (fn [ctx]
             (assoc ctx
-                   :ring/response
+                   :ring1/response
                    (http-response->ring1 (:exoscale.telex/response ctx))))})
 
 (def query-params-interceptor
   {:name ::query-params
    :enter
    (-> interceptor/encode-query-params
-       (ix/in [:ring/request :query-params])
-       (ix/out [:ring/request :query]))})
+       (ix/in [:ring1/request :query-params])
+       (ix/out [:ring1/request :query]))})
 
 (def form-params-interceptor
   {:name ::form-params
    :enter (-> interceptor/encode-query-params
-              (ix/in [:ring/request :form-params])
-              (ix/out [:ring/request :body])
-              (ix/when (fn [{:ring/keys [request]}]
+              (ix/in [:ring1/request :form-params])
+              (ix/out [:ring1/request :body])
+              (ix/when (fn [{:ring1/keys [request]}]
                          (and (not (:body request))
                               (seq (:form-params request))))))})
 
