@@ -27,15 +27,14 @@
 (def ring-format-interceptor
   {:name ::map-format-interceptor
    :enter (fn [ctx]
-            ;; we consider all non ns keys, ring-keys
             (-> (apply dissoc ctx request-keys)
                 (assoc :ring1/request (select-keys ctx request-keys))))
-   :leave (fn [{:as ctx :ring1/keys [response]}]
+   :leave (fn [ctx]
             ;; we just care about the final request output, hide
             ;; original request from potential output
             (-> ctx
                 (dissoc :ring1/response :ring1/request)
-                (conj response)))})
+                (conj (:ring1/response ctx))))})
 
 (def request-interceptor
   {:name ::request
