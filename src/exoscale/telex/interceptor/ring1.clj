@@ -2,16 +2,13 @@
   (:require [exoscale.interceptor :as ix]
             [exoscale.telex.interceptor :as interceptor]
             [exoscale.telex.request :as request]
-            [exoscale.telex.response :as response])
-  (:import (java.net.http HttpRequest
-                          HttpResponse)))
+            [exoscale.telex.response :as response]))
 
 (def request-keys [:url :body :method :query :headers :url
                    ;; exts
                    :form-params :query-params])
 
 (defn- ring1->http-request
-  ^HttpRequest
   [{:keys [url query method body headers] :or {method :get}
     :exoscale.telex.request/keys [timeout version expect-continue?]}]
   (request/http-request url query method body headers timeout version
