@@ -1,16 +1,11 @@
 (ns exoscale.telex.client-test
   (:require [clojure.test :refer [deftest is use-fixtures]]
-            exoscale.ex.test
             [exoscale.ex :as ex]
-            [exoscale.telex.mocks :as mocks]
-            [exoscale.telex.interceptor :as ix]
-            [exoscale.telex.interceptor.ring1 :as r1]
-            [ring.util.io :as rio]
-            [clojure.java.io :as io]
+            exoscale.ex.test
             [exoscale.telex :as client]
-            [qbits.auspex :as ax]
-            [ring.core.protocols :as j])
-  (:import (java.io InputStream)))
+            [exoscale.telex.interceptor :as ix]
+            [exoscale.telex.mocks :as mocks]
+            [qbits.auspex :as ax]))
 
 (def ^:dynamic client)
 (def ^:dynamic request-opts)
