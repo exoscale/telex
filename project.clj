@@ -9,7 +9,8 @@
                  [exoscale/ex-auspex "0.3.17"]
                  [exoscale/ex-http "0.3.17"]
                  [cc.qbits/auspex "0.1.0-alpha4"]
-                 [cc.qbits/commons "1.0.0-alpha3"]]
+                 [cc.qbits/commons "1.0.0-alpha3"]
+                 [com.github.mizosoft.methanol/methanol "1.4.1"]]
   :profiles {:dev  {:dependencies [[ring/ring-jetty-adapter    "1.7.1"]]}
              :test {:dependencies []}}
   :plugins [[lein-cljfmt "0.7.0"]]

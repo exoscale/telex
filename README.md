@@ -71,6 +71,10 @@ Response options:
 
 * `:exoscale.telex.response/body-handler`
 * `:exoscale.telex.response/executor`
+* `:exoscale.telex.response.body-handler/timeout` dicts how long a
+  bodyhandler will try to get data from the response until triggering
+  a java.net.http.HttpTimeoutException. default to 10s. This will only
+  be tested if/when you start consuming the body.
 
 Body handler options are in `exoscale.telex.response`, some
 of them can also take extra arguments:
@@ -79,7 +83,6 @@ of them can also take extra arguments:
 `:input-stream` `:publisher` `:byte-array-consumer` `:file`
 `:file-download` `:subscriber` `:line-subscriber` `:buffering`
 `:replacing` `:lines`.
-
 
 ## Exceptional http statuses
 
