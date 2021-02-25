@@ -108,13 +108,13 @@
   (mocks/with-server 1234 (constantly {:status 400
                                        :body "Invalid"})
     (ex/try+
-      (ax/unwrap
-       (request {:method :get
-                 :url "http://localhost:1234"
-                 :exoscale.telex.response/body-handler :string}))
-      (catch :exoscale.ex/incorrect {{:keys [status body]} :response}
-        (is (= status 400))
-        (is (= body "Invalid"))))))
+     (ax/unwrap
+      (request {:method :get
+                :url "http://localhost:1234"
+                :exoscale.telex.response/body-handler :string}))
+     (catch :exoscale.ex/incorrect {{:keys [status body]} :response}
+       (is (= status 400))
+       (is (= body "Invalid"))))))
 
 (deftest test-response-body-read-timeout
   (is (thrown? java.net.http.HttpTimeoutException
