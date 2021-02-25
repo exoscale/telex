@@ -116,12 +116,12 @@
                (ax/unwrap (request {:method :get
                                     :url "https://releases.ubuntu.com/20.04.2.0/ubuntu-20.04.2.0-desktop-amd64.iso"
                                     :exoscale.telex.response/body-handler :string
-                                    :exoscale.telex.response.body-handler/timeout 100})))
+                                    :exoscale.telex.response.body-handler/timeout 10})))
       "when we try to realize we will get the actual exception")
   (is (thrown? java.io.IOException
                (-> @(request {:method :get
                               :url "https://releases.ubuntu.com/20.04.2.0/ubuntu-20.04.2.0-desktop-amd64.iso"
-                              :exoscale.telex.response.body-handler/timeout 100})
+                              :exoscale.telex.response.body-handler/timeout 10})
                    :body
                    slurp))
       "input stream will just close in that case, HttpReadTimeoutException will be in cause, IOE is root")
