@@ -29,7 +29,7 @@
                 :exoscale.telex/keys [request ^HttpClient client]}]
             (let [{:exoscale.telex.response/keys [executor]
                    :exoscale.telex.request/keys [async?]} ctx
-                  body-handler (response/body-handler ctx)]
+                  body-handler (response/make-body-handler ctx)]
               (if async?
                 (-> (.sendAsync client request body-handler)
                     (ax/then (fn [response]

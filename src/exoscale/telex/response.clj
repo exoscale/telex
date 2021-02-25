@@ -3,7 +3,9 @@
                           HttpResponse$BodyHandlers
                           HttpResponse$BodyHandler
                           HttpResponse$BodyHandlers)
-           java.nio.charset.Charset))
+           (java.nio.charset Charset)
+           (com.github.mizosoft.methanol MoreBodyHandlers)
+           (java.time Duration)))
 
 (defprotocol Response
   (status [http-response] "Returns http status of underlying response")
@@ -84,6 +86,13 @@
       (fn? bh) (bh)
       (instance? HttpResponse$BodyHandler bh) bh
       :else (HttpResponse$BodyHandlers/ofInputStream))))
+
+(defn make-body-handler
+  [{:as ctx :exoscale.telex.response.body-handler/keys [timeout]
+    :or {timeout 10000}}]
+  (cond-> (body-handler ctx)
+    (pos-int? timeout)
+    (MoreBodyHandlers/withReadTimeout (Duration/ofMillis timeout))))
 
 (defn headers->map
   [^HttpResponse http-response]
