@@ -1,4 +1,4 @@
-(defproject exoscale/telex "0.1.7"
+(defproject exoscale/telex "0.1.8-SNAPSHOT"
   :description "java.net.http helpers"
   :license {:name "ISC"}
   :url "https://github.com/exoscale/telex"
