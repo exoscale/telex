@@ -114,13 +114,13 @@
 (deftest test-response-body-read-timeout
   (is (thrown? java.net.http.HttpTimeoutException
                (ax/unwrap (request {:method :get
-                                    :url "https://releases.ubuntu.com/20.04.2.0/ubuntu-20.04.2.0-desktop-amd64.iso"
+                                    :url "https://releases.ubuntu.com/20.04/ubuntu-20.04.4-desktop-amd64.iso"
                                     :exoscale.telex.response/body-handler :string
                                     :exoscale.telex.response.body-handler/timeout 10})))
       "when we try to realize we will get the actual exception")
   (is (thrown? java.io.IOException
                (-> @(request {:method :get
-                              :url "https://releases.ubuntu.com/20.04.2.0/ubuntu-20.04.2.0-desktop-amd64.iso"
+                              :url "https://releases.ubuntu.com/20.04/ubuntu-20.04.4-desktop-amd64.iso"
                               :exoscale.telex.response.body-handler/timeout 10})
                    :body
                    slurp))

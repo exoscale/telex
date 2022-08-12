@@ -3,15 +3,15 @@
   :license {:name "ISC"}
   :url "https://github.com/exoscale/telex"
   :deploy-repositories [["releases" :clojars] ["snapshots" :clojars]]
-  :dependencies [[org.clojure/clojure "1.10.1"]
-                 [exoscale/interceptor "0.1.9"]
-                 [exoscale/ex "0.3.17"]
-                 [exoscale/ex-auspex "0.3.17"]
-                 [exoscale/ex-http "0.3.17"]
-                 [cc.qbits/auspex "0.1.0-alpha4"]
-                 [cc.qbits/commons "1.0.0-alpha3"]
-                 [com.github.mizosoft.methanol/methanol "1.4.1"]]
-  :profiles {:dev  {:dependencies [[ring/ring-jetty-adapter    "1.7.1"]]}
+  :dependencies [[org.clojure/clojure "1.11.1"]
+                 [exoscale/interceptor "0.1.12"]
+                 [exoscale/ex "0.4.0"]
+                 [exoscale/ex-auspex "0.4.0"]
+                 [exoscale/ex-http "0.4.0"]
+                 [cc.qbits/auspex "1.0.0-alpha10"]
+                 [cc.qbits/commons "1.0.0-alpha5"]
+                 [com.github.mizosoft.methanol/methanol "1.7.0"]]
+  :profiles {:dev {:dependencies [[ring/ring-jetty-adapter "1.7.1"]]}
              :test {:dependencies []}}
   :plugins [[lein-cljfmt "0.7.0"]]
   :cljfmt {:remove-multiple-non-indenting-spaces? true}
