@@ -16,7 +16,7 @@
                  [exoscale/ex "0.4.0"]
                  [exoscale/ex-auspex "0.4.0"]
                  [exoscale/ex-http "0.4.0"]
-                 [cc.qbits/auspex "1.0.0-alpha10"]
+                 [cc.qbits/auspex "1.0.3"]
                  [cc.qbits/commons "1.0.0-alpha5"]
                  [com.github.mizosoft.methanol/methanol "1.7.0"]]
   :profiles {:dev {:dependencies [[ring/ring-jetty-adapter "1.7.1"]]}
