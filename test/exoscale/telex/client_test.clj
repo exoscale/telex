@@ -7,6 +7,8 @@
             [exoscale.telex.mocks :as mocks]
             [qbits.auspex :as ax]))
 
+(def large-file "https://releases.ubuntu.com/jammy/ubuntu-22.04.3-desktop-amd64.iso")
+
 (def ^:dynamic client)
 (def ^:dynamic request-opts)
 (def ^:dynamic request)
@@ -103,24 +105,24 @@
   (mocks/with-server 1234 (constantly {:status 400
                                        :body "Invalid"})
     (ex/try+
-     (ax/unwrap
-      (request {:method :get
-                :url "http://localhost:1234"
-                :exoscale.telex.response/body-handler :string}))
-     (catch :exoscale.ex/incorrect {{:keys [status body]} :response}
-       (is (= status 400))
-       (is (= body "Invalid"))))))
+      (ax/unwrap
+       (request {:method :get
+                 :url "http://localhost:1234"
+                 :exoscale.telex.response/body-handler :string}))
+      (catch :exoscale.ex/incorrect {{:keys [status body]} :response}
+        (is (= status 400))
+        (is (= body "Invalid"))))))
 
 (deftest test-response-body-read-timeout
   (is (thrown? java.net.http.HttpTimeoutException
                (ax/unwrap (request {:method :get
-                                    :url "https://releases.ubuntu.com/20.04/ubuntu-20.04.4-desktop-amd64.iso"
+                                    :url large-file
                                     :exoscale.telex.response/body-handler :string
                                     :exoscale.telex.response.body-handler/timeout 10})))
       "when we try to realize we will get the actual exception")
   (is (thrown? java.io.IOException
                (-> @(request {:method :get
-                              :url "https://releases.ubuntu.com/20.04/ubuntu-20.04.4-desktop-amd64.iso"
+                              :url large-file
                               :exoscale.telex.response.body-handler/timeout 10})
                    :body
                    slurp))
