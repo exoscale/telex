@@ -48,8 +48,7 @@
                                 target-dir
                                 lib)
               :installer :remote
-              :sign-releases? false
-              :repository "clojars"})
+              :sign-releases? false})
   opts)
 
 (defn- sh
