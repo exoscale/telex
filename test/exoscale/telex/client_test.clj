@@ -118,7 +118,7 @@
                (ax/unwrap (request {:method :get
                                     :url large-file
                                     :exoscale.telex.response/body-handler :string
-                                    :exoscale.telex.response.body-handler/timeout 10})))
+                                    :exoscale.telex.response.body-handler/timeout 2})))
       "when we try to realize we will get the actual exception")
   (is (thrown? java.io.IOException
                (-> @(request {:method :get
