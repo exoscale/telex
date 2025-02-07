@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    branches:
+    - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
+  release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - uses: fregante/setup-git-user@v2
+
+      - name: Install clojure tools
+        uses: DeLaGuardo/setup-clojure@13.1
+        with:
+          cli: 1.11.1.1105
+
+      - name: Release to clojars
+        env:
+          CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
+          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_PASSWORD }}
+        run: clojure -T:build release

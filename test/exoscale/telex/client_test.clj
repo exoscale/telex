@@ -7,7 +7,7 @@
             [exoscale.telex.mocks :as mocks]
             [qbits.auspex :as ax]))
 
-(def large-file "https://releases.ubuntu.com/jammy/ubuntu-22.04.3-desktop-amd64.iso")
+(def large-file "https://ash-speed.hetzner.com/1GB.bin")
 
 (def ^:dynamic client)
 (def ^:dynamic request-opts)

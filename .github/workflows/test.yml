@@ -13,17 +13,10 @@ jobs:
         with:
           java-version: '11'
 
-      - name: Install leiningen
+      - name: Install clj
         uses: DeLaGuardo/setup-clojure@master
         with:
-          lein: 2.9.3
+          cli: 1.10.1.693
 
-      - name: Cache maven
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: m2-${{ hashFiles('project.clj') }}
-          restore-keys: |
-            m2-
       - name: Test
-        run: lein test
+        run: clojure -X:test
