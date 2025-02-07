@@ -15,7 +15,8 @@
    :exec-fn test-runner/run
    :jvm-opts ["-Dclojure.main.report=stderr"]
    :extra-paths ["test"]}
+
   :build
   {:deps {io.github.clojure/tools.build {:git/tag "v0.10.6" :git/sha "52cf7d6"}
-          io.github.slipset/deps-deploy {:git/sha "b87c9299761762984bd54a285ca8fa0aac81809f"}}
+          io.github.slipset/deps-deploy {:git/sha "07022b92d768590ab25b9ceb619ef17d2922da9a"}}
    :ns-default build}}}
