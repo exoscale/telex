@@ -7,7 +7,7 @@
             [exoscale.telex.mocks :as mocks]
             [qbits.auspex :as ax]))
 
-(def large-file "https://releases.ubuntu.com/jammy/ubuntu-22.04.3-desktop-amd64.iso")
+(def large-file "https://ash-speed.hetzner.com/1GB.bin")
 
 (def ^:dynamic client)
 (def ^:dynamic request-opts)
@@ -118,7 +118,7 @@
                (ax/unwrap (request {:method :get
                                     :url large-file
                                     :exoscale.telex.response/body-handler :string
-                                    :exoscale.telex.response.body-handler/timeout 10})))
+                                    :exoscale.telex.response.body-handler/timeout 2})))
       "when we try to realize we will get the actual exception")
   (is (thrown? java.io.IOException
                (-> @(request {:method :get

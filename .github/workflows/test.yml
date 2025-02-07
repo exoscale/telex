@@ -1,29 +1,23 @@
 name: Test
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v1
+      - uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          distribution: 'temurin'
+          java-version: '21'
 
-      - name: Install leiningen
-        uses: DeLaGuardo/setup-clojure@master
+      - name: Install clj
+        uses: DeLaGuardo/setup-clojure@13.0
         with:
-          lein: 2.9.3
+          cli: 1.10.1.693
 
-      - name: Cache maven
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: m2-${{ hashFiles('project.clj') }}
-          restore-keys: |
-            m2-
       - name: Test
-        run: lein test
+        run: clojure -X:test

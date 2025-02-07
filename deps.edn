@@ -1,0 +1,21 @@
+{:deps
+ {org.clojure/clojure {:mvn/version "1.12.0"}
+  exoscale/interceptor {:mvn/version "0.1.17"}
+  exoscale/ex {:mvn/version "0.4.1"}
+  exoscale/ex-auspex {:mvn/version "0.4.1"}
+  exoscale/ex-http {:mvn/version "0.4.1"}
+  cc.qbits/auspex {:mvn/version "1.0.3"}
+  cc.qbits/commons {:mvn/version "1.0.0-alpha6"}
+  com.github.mizosoft.methanol/methanol {:mvn/version "1.8.1"}}
+
+ :aliases
+ {:test
+  {:extra-deps {mania/test-runner {:local/root "dev"}
+                ring/ring-jetty-adapter {:mvn/version "1.7.1"}}
+   :exec-fn test-runner/run
+   :jvm-opts ["-Dclojure.main.report=stderr"]
+   :extra-paths ["test"]}
+  :build
+  {:deps {io.github.clojure/tools.build {:git/tag "v0.10.6" :git/sha "52cf7d6"}
+          io.github.slipset/deps-deploy {:git/sha "b87c9299761762984bd54a285ca8fa0aac81809f"}}
+   :ns-default build}}}
