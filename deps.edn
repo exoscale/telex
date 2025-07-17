@@ -1,6 +1,6 @@
 {:deps
  {org.clojure/clojure {:mvn/version "1.12.1"}
-  com.squareup.okhttp3/okhttp-jvm {:mvn/version "5.0.0-alpha.16"}
+  com.squareup.okhttp3/okhttp-jvm {:mvn/version "5.1.0"}
   exoscale/ex {:mvn/version "0.4.1"}
   exoscale/ex-http {:mvn/version "0.4.1"}}
 

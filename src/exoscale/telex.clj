@@ -107,6 +107,8 @@
    builder
    opts))
 
+(def client-options {})
+
 (defn client
   ([^OkHttpClient client opts]
    (let [b ^OkHttpClient$Builder (.newBuilder client)]
@@ -116,22 +118,15 @@
   ([opts]
    (let [^OkHttpClient$Builder b
          (-> (OkHttpClient$Builder/new)
-             (set-client-options! opts))]
+             (set-client-options! (into client-options opts)))]
      (.build b))))
 
-(def default-options {:throw-on-error true})
+(def request-options {:throw-on-error true})
 
 (defn request
   [^OkHttpClient client request-map & {:as opts}]
-  (let [opts (into default-options opts)]
+  (let [opts (into request-options opts)]
     (-> client
         (.newCall (request/build request-map opts))
         (.execute)
         (response/build opts))))
-
-;; (def c (client {}))
-;; (slurp (:body (request c {:url "http://example.com" :method :get})))
-
-;; (request c
-;;          {:uri "http://example.com/asdf" :method :get}
-;;          {:response-body-decoder :string})
