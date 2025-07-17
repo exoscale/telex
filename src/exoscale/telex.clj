@@ -108,18 +108,16 @@
    opts))
 
 (defn client
-  [opts]
-  (let [^OkHttpClient$Builder b
-        (-> (OkHttpClient$Builder/new)
-            (set-client-options! opts))]
-    (.build b)))
-
-(defn from-client
-  [^OkHttpClient client opts]
-  (let [b ^OkHttpClient$Builder (.newBuilder client)]
-    (-> b
-        (set-client-options! opts)
-        (.build))))
+  ([client opts]
+   (let [b ^OkHttpClient$Builder (.newBuilder client)]
+     (-> b
+         (set-client-options! opts)
+         (.build))))
+  ([opts]
+   (let [^OkHttpClient$Builder b
+         (-> (OkHttpClient$Builder/new)
+             (set-client-options! opts))]
+     (.build b))))
 
 (def default-options {:throw-on-error true})
 
