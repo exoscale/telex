@@ -113,25 +113,26 @@
         (is (= body "Invalid"))))))
 
 (deftest test-response-body-read-timeout
-  (is (thrown? java.io.IOException
-               (request {:method :get
-                         :url large-file}
-                        :response-body-decoder :string
-                        :read-timeout 2))
-      "when we try to realize we will get the actual exception")
-  (is (thrown? java.io.IOException
-               (-> (request {:method :get
-                             :url large-file
-                             :read-timeout 10})
-                   :body
-                   slurp))
-      "input stream will just close in that case, HttpReadTimeoutException will be in cause, IOE is root")
+  (binding [*client-opts* {:read-timeout 2}]
+    (is (thrown? java.io.IOException
+                 (request {:method :get
+                           :url large-file}
+                          :response-body-decoder :string
+                          :read-timeout 2))
+        "when we try to realize we will get the actual exception"))
+  (binding [*client-opts* {:read-timeout 10}]
+    (is (thrown? java.io.IOException
+                 (-> (request {:method :get
+                               :url large-file})
+                     :body
+                     slurp))
+        "input stream will just close in that case, HttpReadTimeoutException will be in cause, IOE is root"))
   (mocks/with-server 1234 (constantly {:status 200
                                        :body "ok"})
-    (is (seq (slurp (:body (request {:method :get
-                                     :url "http://localhost:1234"
-                                     :read-timeout 3000}))))
-        "we got content before timeout")))
+    (binding [*client-opts* {:read-timeout 3000}]
+      (is (seq (slurp (:body (request {:method :get
+                                       :url "http://localhost:1234"}))))
+          "we got content before timeout"))))
 
 ;; (deftest params-test
 ;;   (is (= "a=1&b=2" (ix/encode-query-params {:a 1 :b 2})))
