@@ -1,15 +1,13 @@
 (ns exoscale.telex.request
   (:import
-   (java.io File InputStream ByteArrayInputStream)
-   (okhttp3 Request
-            Request$Builder
+   (java.io File InputStream)
+   (okhttp3 Request$Builder
             Headers
+            Request
             Headers$Builder
             RequestBody
-            MediaType
-                    ;; okhttp3.internal.http.HttpMethod
-            )
-   (okio ByteString Buffer Okio))
+            MediaType)
+   (okio ByteString Okio))
   (:require [clojure.string :as str]))
 
 (set! *warn-on-reflection* true)
@@ -74,8 +72,10 @@
        (MediaType/parse content-type)
        default-media-type))))
 
-(defn build [{:as _request :keys [method headers uri body]}
-             & {:as _opts}]
+(defn build
+  ^Request
+  [{:as _request :keys [method headers url body]}
+   & {:as _opts}]
   (let [method (->method method)
         req (Request$Builder/new)
         headers' (->headers headers)
@@ -83,5 +83,5 @@
     (-> (doto req
           (.method method (to-body body (media-type ct)))
           (.headers (->headers headers))
-          (.url ^String uri))
+          (.url ^String url))
         .build)))

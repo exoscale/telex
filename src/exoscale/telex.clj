@@ -2,13 +2,13 @@
   (:require [exoscale.ex :as ex]
             [exoscale.telex.request :as request]
             [exoscale.telex.response :as response])
-  (:import (java.time Duration)
-           (javax.net.ssl SSLContext)
-           (okhttp3 OkHttpClient
-                    OkHttpClient$Builder
-                    Dispatcher
-                    EventListener
-                    EventListener$Factory)))
+  (:import ;; (javax.net.ssl SSLContext)
+   (java.security.cert CertificateFactory)
+   (java.time Duration)
+   (okhttp3 OkHttpClient
+            OkHttpClient$Builder
+            Dispatcher
+            Protocol)))
 
 (set! *warn-on-reflection* true)
 
@@ -18,13 +18,11 @@
   [^OkHttpClient$Builder b _ v]
   (.followRedirects b v))
 
-;; (defmethod set-client-option! :ssl-context
-;;   [^OkHttpClient$Builder b _ ^SSLContext ssl-context]
-;;   (set-client-option! b :ssl-socket-factory
-;;                       (.getSocketFactory ssl-context)
-;;                        )
-;; )
-
+(defmethod set-client-option! :tls
+  [^OkHttpClient$Builder b _ tls]
+  (set-client-option! b :ssl-socket-factory
+                      ;; (.getSocketFactory ssl-context)
+                      ))
 (defmethod set-client-option! :add-interceptors
   [^OkHttpClient$Builder b _ interceptors]
   (doseq [ix interceptors]
@@ -74,6 +72,10 @@
   [^OkHttpClient$Builder b _ v]
   (.dispatcher b v))
 
+(defmethod set-client-option! :protocols
+  [^OkHttpClient$Builder b _ v]
+  (.protocols b (map Protocol/get v)))
+
 (defmethod set-client-option! :write-timeout
   [^OkHttpClient$Builder b _ v]
   (.writeTimeout b (Duration/ofMillis v)))
@@ -119,14 +121,19 @@
         (set-client-options! opts)
         (.build))))
 
+(def default-options {:throw-on-error true})
+
 (defn request
-  ([^OkHttpClient client request-map]
-   (request client request-map nil))
-  ([^OkHttpClient client request-map opts]
-   (-> client
-       (.newCall (request/build request-map opts))
-       (.execute)
-       (response/build opts))))
+  [^OkHttpClient client request-map & {:as opts}]
+  (let [opts (into default-options opts)]
+    (-> client
+        (.newCall (request/build request-map opts))
+        (.execute)
+        (response/build opts))))
 
 ;; (def c (client {}))
-;; (slurp (:body (request c {:uri "http://google.com" :method :get})))
+;; (slurp (:body (request c {:uri "http://example.com" :method :get})))
+
+;; (request c
+;;          {:uri "http://example.com/asdf" :method :get}
+;;          {:response-body-decoder :string})
