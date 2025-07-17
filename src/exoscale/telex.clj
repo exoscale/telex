@@ -108,7 +108,7 @@
    opts))
 
 (defn client
-  ([client opts]
+  ([^OkHttpClient client opts]
    (let [b ^OkHttpClient$Builder (.newBuilder client)]
      (-> b
          (set-client-options! opts)
@@ -130,7 +130,7 @@
         (response/build opts))))
 
 ;; (def c (client {}))
-;; (slurp (:body (request c {:uri "http://example.com" :method :get})))
+;; (slurp (:body (request c {:url "http://example.com" :method :get})))
 
 ;; (request c
 ;;          {:uri "http://example.com/asdf" :method :get}

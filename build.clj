@@ -5,7 +5,7 @@
             [deps-deploy.deps-deploy :as dd]))
 
 (def lib 'exoscale/telex)
-(def version (format "1.0.%s" (b/git-count-revs nil)))
+(def version (format "2.0.%s" (b/git-count-revs nil)))
 (def class-dir "target/classes")
 (def copy-srcs ["src"])
 (def target-dir "target")
