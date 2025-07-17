@@ -1,8 +1,14 @@
 (ns exoscale.telex
-  (:require [exoscale.telex.request :as request]
+  (:require [exoscale.ex :as ex]
+            [exoscale.telex.request :as request]
             [exoscale.telex.response :as response])
-  (:import (okhttp3 OkHttpClient
-                    OkHttpClient$Builder)))
+  (:import (java.time Duration)
+           (javax.net.ssl SSLContext)
+           (okhttp3 OkHttpClient
+                    OkHttpClient$Builder
+                    Dispatcher
+                    EventListener
+                    EventListener$Factory)))
 
 (set! *warn-on-reflection* true)
 
@@ -11,6 +17,37 @@
 (defmethod set-client-option! :follow-redirects
   [^OkHttpClient$Builder b _ v]
   (.followRedirects b v))
+
+;; (defmethod set-client-option! :ssl-context
+;;   [^OkHttpClient$Builder b _ ^SSLContext ssl-context]
+;;   (set-client-option! b :ssl-socket-factory
+;;                       (.getSocketFactory ssl-context)
+;;                        )
+;; )
+
+(defmethod set-client-option! :add-interceptors
+  [^OkHttpClient$Builder b _ interceptors]
+  (doseq [ix interceptors]
+    (set-client-option! b :add-interceptor ix))
+  b)
+
+(defmethod set-client-option! :add-interceptor
+  [^OkHttpClient$Builder b _ interceptor]
+  (.addInterceptor b interceptor))
+
+(defmethod set-client-option! :add-network-interceptors
+  [^OkHttpClient$Builder b _ interceptors]
+  (doseq [ix interceptors]
+    (set-client-option! b :add-network-interceptor ix))
+  b)
+
+(defmethod set-client-option! :add-network-interceptor
+  [^OkHttpClient$Builder b _ interceptor]
+  (.addNetworkInterceptor b interceptor))
+
+(defmethod set-client-option! :ssl-socket-factory
+  [^OkHttpClient$Builder b _ [factory trust-manager]]
+  (.sslSocketFactory b factory trust-manager))
 
 (defmethod set-client-option! :follow-ssl-redirects
   [^OkHttpClient$Builder b _ v]
@@ -21,24 +58,43 @@
   (.retryOnConnectionFailure b v))
 
 (defmethod set-client-option! :dispatcher
+  [^OkHttpClient$Builder b _ {:as _dispatcher
+                              :keys [executor
+                                     max-requests
+                                     max-requests-per-host]}]
+  (set-client-option! b :dispatcher*
+                      (let [d ^Dispatcher (Dispatcher. executor)]
+                        (when max-requests
+                          (.setMaxRequests d (int max-requests)))
+                        (when max-requests-per-host
+                          (.setMaxRequestsPerHost d (int max-requests-per-host)))
+                        d)))
+
+(defmethod set-client-option! :dispatcher*
   [^OkHttpClient$Builder b _ v]
   (.dispatcher b v))
 
 (defmethod set-client-option! :write-timeout
   [^OkHttpClient$Builder b _ v]
-  (.writeTimeout b v))
+  (.writeTimeout b (Duration/ofMillis v)))
 
 (defmethod set-client-option! :read-timeout
   [^OkHttpClient$Builder b _ v]
-  (.readTimeout b v))
+  (.readTimeout b (Duration/ofMillis v)))
 
 (defmethod set-client-option! :connect-timeout
   [^OkHttpClient$Builder b _ v]
-  (.connectTimeout b v))
+  (.connectTimeout b (Duration/ofMillis v)))
 
 (defmethod set-client-option! :call-timeout
   [^OkHttpClient$Builder b _ v]
-  (.callTimeout b v))
+  (.callTimeout b (Duration/ofMillis v)))
+
+(defmethod set-client-option! :default
+  [^OkHttpClient$Builder _b k v]
+  (ex/ex-incorrect! "Unsupported client option"
+                    {:key k
+                     :value v}))
 
 (defn set-client-options!
   ^OkHttpClient$Builder
