@@ -1,84 +1,87 @@
 (ns exoscale.telex.request
-  (:require [clojure.string :as str]
-            [exoscale.telex.enum :as enum]
-            [qbits.auspex.executor :as exe])
-  (:import (java.io InputStream)
-           (java.net URI)
-           (java.net.http
-            HttpRequest
-            HttpRequest$BodyPublishers
-            HttpRequest$BodyPublisher
-            HttpRequest$BodyPublishers)
-           (java.time Duration)
-           (java.util.function Supplier)))
+  (:import
+   (java.io File InputStream ByteArrayInputStream)
+   (okhttp3 Request
+            Request$Builder
+            Headers
+            Headers$Builder
+            RequestBody
+            MediaType
+                    ;; okhttp3.internal.http.HttpMethod
+            )
+   (okio ByteString Buffer Okio))
+  (:require [clojure.string :as str]))
 
-(def default-options
-  (merge #:exoscale.telex.request{:async? true
-                                  :throw-on-error? true}
-         #:exoscale.telex.response{:executor (exe/work-stealing-executor)}))
+(set! *warn-on-reflection* true)
 
-(defprotocol BodyPublisher
-  (-body-publisher [x]))
+(defprotocol ToBody
+  (to-body [body opts]))
 
-(extend-protocol BodyPublisher
-  (Class/forName "[B")
-  (-body-publisher [ba]
-    (HttpRequest$BodyPublishers/ofByteArray ba))
+(def default-media-type (MediaType/parse "application/octet-stream"))
 
+(extend-protocol ToBody
+  byte/1
+  (to-body [^bytes/1 body ^MediaType media-type]
+    (RequestBody/create media-type body))
+
+  java.io.InputStream
+  (to-body [^InputStream body ^MediaType media-type]
+    (RequestBody/create media-type
+                        ^ByteString (-> (Okio/buffer (Okio/source body))
+                                        .readByteString)))
   String
-  (-body-publisher [s]
-    (HttpRequest$BodyPublishers/ofString s))
+  (to-body [^String body ^MediaType media-type]
+    (RequestBody/create media-type ^String body))
 
-  InputStream
-  (-body-publisher [is]
-    (HttpRequest$BodyPublishers/ofInputStream
-     (reify Supplier (get [_] is))))
-
-  HttpRequest$BodyPublisher
-  (-body-publisher [p]
-    (HttpRequest$BodyPublishers/fromPublisher p))
-
-  Iterable
-  (-body-publisher [it]
-    (HttpRequest$BodyPublishers/ofByteArrays it))
+  File
+  (to-body [^File body ^MediaType media-type]
+    (RequestBody/create media-type ^File body))
 
   Object
-  (-body-publisher [s]
-    (-body-publisher (str s)))
+  (to-body [body ^MediaType media-type]
+    (to-body (str body) media-type))
 
   nil
-  (-body-publisher [_]
-    (HttpRequest$BodyPublishers/noBody)))
+  (to-body [_body ^MediaType _media-type]
+    nil))
 
-(defn http-request
-  [url query method body headers timeout version expect-continue?]
-  (let [builder (doto (HttpRequest/newBuilder)
-                  (.uri (URI. (cond-> url
-                                query
-                                (str "?" query)))))]
-    (case method
-      :get
-      (.GET builder)
-      :delete
-      (.DELETE builder)
-      :post
-      (.POST builder (-body-publisher body))
-      :put
-      (.PUT builder (-body-publisher body))
-      ;; else
-      (.method builder
-               (-> (name method) str/upper-case)
-               (-body-publisher body)))
-
+(defn ->headers
+  ^Headers [headers]
+  (let [b (Headers$Builder/new)]
     (run! (fn [[k v]]
-            (.header builder (name k) (str v)))
+            (.add b
+                  (name k)
+                  (name v)))
           headers)
+    (.build b)))
 
-    (cond-> builder
-      version
-      (.version (enum/version version))
-      timeout
-      (.timeout (Duration/ofMillis timeout))
-      expect-continue?
-      (.expectContinue expect-continue?)
-      :then (.build))))
+(defn ->method
+  [method]
+  (case method
+    :get "GET"
+    :post "POST"
+    :put "PUT"
+    :delete "DELETE"
+    :head "HEAD"
+    :patch "PATCH"
+    :options "OPTIONS"
+    (-> method name str/upper-case)))
+
+(def media-type
+  (memoize
+   (fn [content-type]
+     (if content-type
+       (MediaType/parse content-type)
+       default-media-type))))
+
+(defn build [{:as _request :keys [method headers uri body]}
+             & {:as _opts}]
+  (let [method (->method method)
+        req (Request$Builder/new)
+        headers' (->headers headers)
+        ct (.get headers' "content-type")]
+    (-> (doto req
+          (.method method (to-body body (media-type ct)))
+          (.headers (->headers headers))
+          (.url ^String uri))
+        .build)))
