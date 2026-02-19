@@ -6,7 +6,7 @@
   exoscale/ex-http {:mvn/version "0.4.1"}
   cc.qbits/auspex {:mvn/version "1.0.3"}
   cc.qbits/commons {:mvn/version "1.0.0-alpha6"}
-  com.github.mizosoft.methanol/methanol {:mvn/version "1.8.1"}}
+  com.github.mizosoft.methanol/methanol {:mvn/version "1.9.0"}}
 
  :aliases
  {:test
